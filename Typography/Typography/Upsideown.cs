@@ -79,12 +79,11 @@ namespace Typography
 
         public static string Upsideown(string input)
         {
+            ProgressBar bar = new ProgressBar("Upsidedown", input.Length);
             string returnValue = "";
 
-            Console.WriteLine(input);
             for (int i = 0; i < input.Length; i++)
             {
-                Console.WriteLine(input[i]);
                 if (alphabet.ContainsKey(input[i].ToString()))
                     returnValue += alphabet[input[i].ToString()];
 
@@ -93,6 +92,8 @@ namespace Typography
 
                 else
                     returnValue += input[i];
+
+                bar.Increase();
             }
 
             return returnValue;

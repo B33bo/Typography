@@ -7,7 +7,7 @@ namespace Typography
 {
     public static class PeriodicTable
     {
-        public static Dictionary<string, string> elements = new Dictionary<string, string>()
+        public static Dictionary<string, string> keys = new Dictionary<string, string>()
         {
 			{"h", "hydrogen"},
 			{"li", "lithium"},
@@ -129,27 +129,30 @@ namespace Typography
 			{"lr", "lawrencium"},
 		};
 
-        public static string ToEncrypted(string Input)
+        public static string Encode(string Input)
         {
+			ProgressBar bar = new ProgressBar("Periodic table (Encode)", Input.Length);
             string returnValue = "";
             for (int i = 0; i < Input.Length; i++)
             {
+				bar.Increase();
                 if (i + 1 != Input.Length) // 'i' is not at the very end of the string
                 {
                     string next2Letters = Input[i] + Input[i + 1].ToString();
                     next2Letters = next2Letters.ToLower().Trim();
 
-                    if (elements.ContainsKey(next2Letters)) //If the character + the next character exists
+                    if (keys.ContainsKey(next2Letters)) //If the character + the next character exists
                     {
-                        returnValue += elements[next2Letters] + " "; //Use it
+                        returnValue += keys[next2Letters] + " "; //Use it
+						bar.Increase();
                         i++; //Skip second char
                         continue;
                     }
                 }
 
-                if (elements.ContainsKey(Input[i].ToString()))
+                if (keys.ContainsKey(Input[i].ToString()))
                 {
-                    returnValue += elements[Input[i].ToString()] + " "; //If the character exists, just use it
+                    returnValue += keys[Input[i].ToString()] + " "; //If the character exists, just use it
                     continue;
                 }
 
@@ -159,18 +162,21 @@ namespace Typography
             return returnValue;
         }
 
-        public static string FromEncrypted(string Input)
+        public static string Decode(string Input)
         {
-            Dictionary<string, string> flippedElements = elements.FlipDict();
+			Dictionary<string, string> flippedElements = keys.FlipDict();
 			string[] inputElements = Input.ToLower().Split(' ');
 			string returnValue = "";
 
+			ProgressBar bar = new ProgressBar("Periodic table (Decode)", inputElements.Length);
             foreach (string item in inputElements)
             {
 				if (flippedElements.ContainsKey(item))
 					returnValue += $" {flippedElements[item]}";
 				else
 					Program.Error($"Periodic table:: No periodic table character for {item}");
+
+				bar.Increase();
             }
 
 			//Apparantly this is the same as returnValue.substring(1) and that is the coolest thing in the world
