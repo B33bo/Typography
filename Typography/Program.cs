@@ -16,7 +16,10 @@ namespace Typography
         {
             { @"\n", "\n" },
             { @"\r", "\r"},
-            { "tstvar", "testing123" }
+            { "tstvar", "testing123" },
+            { "percent", "%" },
+            { "semicolon", ";" },
+            { "tilda", "~" },
         };
 
         [STAThread]
@@ -34,6 +37,7 @@ namespace Typography
             }
 
             string Input = args.Length > 0 ? ArgsIntoString(args) : Console.ReadLine();
+            Input.Replace("\n", "");
 
             if (args.Length == 1)
             {
@@ -390,6 +394,47 @@ namespace Typography
 
                 case TypographyType.change:
                     return Params.safeGet(1);
+
+                case TypographyType.substring:
+                    if (!int.TryParse(Params.safeGet(1), out int start))
+                    {
+                        Error($"Substring: {Params.safeGet(1)} was not an int");
+                    }
+
+                    int substringLength = -1;
+                    if (Params.Length > 2)
+                    {
+                        if (!int.TryParse(Params.safeGet(2), out substringLength))
+                        {
+                            Error($"Substring: {Params.safeGet(2)} was not an int");
+                        }
+                    }
+
+                    if (start + substringLength > input.Length)
+                    {
+                        Error($"Start bound + length ({start + substringLength}) is higher than the length of the string ({input.Length})");
+                        return input;
+                    }
+
+                    if (substringLength < 0)
+                        return input.Substring(start);
+
+                    return input.Substring(start, substringLength);
+
+                case TypographyType.appendBehind:
+                    if (StringIsTrue(Params, 2, true))
+                    {
+                        return Params.safeGet(1) + input;
+                    }
+                    else
+                    {
+                        string param1 = Params.safeGet(1);
+                        return input.Substring(param1.Length, input.Length - param1.Length);
+                    }
+
+                case TypographyType.length:
+                    return input.Length.ToString();
+
                 default:
                     break;
             }
@@ -464,6 +509,9 @@ namespace Typography
         owoify,
         set,
         change,
+        substring,
+        appendBehind,
+        length,
     }
 
     public static class TypographyExtention
@@ -552,6 +600,10 @@ namespace Typography
                     return "set variable            set~name";
                 case TypographyType.change:
                     return "change current string   change~value";
+                case TypographyType.appendBehind:
+                    return "append behind           appendbehind~value~encode/decode";
+                case TypographyType.length:
+                    return "length of string        length";
                 default:
                     return input.ToString();
             }
@@ -643,6 +695,12 @@ namespace Typography
                     return TypographyType.set;
                 case "change":
                     return TypographyType.change;
+                case "substring":
+                    return TypographyType.substring;
+                case "appendbehind":
+                    return TypographyType.appendBehind;
+                case "length":
+                    return TypographyType.length;
                 case "":
                 case " ":
                     return TypographyType.None;
