@@ -40,10 +40,10 @@ namespace Typography
 
         static string getWordFor(char letter, List<string> phoneticAlphabet)
         {
-            letter = letter.toLower();
+            letter = letter.ToLower();
             for (int i = 0; i < phoneticAlphabet.Count; i++)
             {
-                if (phoneticAlphabet[i][0].toLower() == letter)
+                if (phoneticAlphabet[i][0].ToLower() == letter)
                     return phoneticAlphabet[i];
             }
 

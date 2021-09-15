@@ -425,7 +425,10 @@ namespace Typography
                     returnValue += seperator + keys[current.ToLower()];
 
                 else if (InputSplit[i] == " " || InputSplit[i] == "\n" || InputSplit[i] == "\r" || InputSplit[i] == "")
+                {
+                    returnValue += InputSplit[i];
                     continue;
+                }
 
                 else if (keys.ContainsKey(withoutSpace))
                     returnValue += seperator + keys[withoutSpace];
@@ -438,7 +441,7 @@ namespace Typography
                     if (keys.ContainsKey("error"))
                         returnValue += seperator + keys["error"];
                     else
-                        returnValue += $"{seperator}!{InputSplit[i]}!";
+                        returnValue += $"{seperator}{InputSplit[i]}";
 
                     Program.Error($"{ProgressBarName}: Cannot convert key {InputSplit[i]}");
                 }

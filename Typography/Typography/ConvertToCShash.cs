@@ -7,7 +7,7 @@ namespace Typography
         public static string Encode(string Input)
         {
             ProgressBar bar = new ProgressBar("Big letters to dict", Input.Length);
-            Console.WriteLine("SECRET CONVERT TO DICT FOUND");
+
             string returnValue = "";
             string[] lines = Input.Split('\n');
             int itersSinceLastChar = 0;
@@ -25,6 +25,7 @@ namespace Typography
 
                 if (itersSinceLastChar == 0)
                     returnValue += $"{lines[i]}\",";
+
                 else if (itersSinceLastChar != 4)
                     returnValue += $" @\"{lines[i]}\" + \"\\n \" + ";
 

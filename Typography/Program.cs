@@ -12,6 +12,13 @@ namespace Typography
     {
         public static bool hasArgs;
         public static int ProgressChunks = 10;
+        public static Dictionary<string, string> variables = new Dictionary<string, string>()
+        {
+            { @"\n", "\n" },
+            { @"\r", "\r"},
+            { "tstvar", "testing123" }
+        };
+
         [STAThread]
         public static void Main(string[] args)
         {
@@ -36,7 +43,7 @@ namespace Typography
                 }
             }
 
-            Console.WriteLine(ProcessString(Input));
+            Console.WriteLine($"\n---\n{ProcessString(Input)}");
         }
 
         public static string ArgsIntoString(string[] args)
@@ -53,7 +60,8 @@ namespace Typography
 
         public static string ProcessString(string input)
         {
-            input = input.Replace(@"%\n%", "\n");
+            input = CheckForVars(input);
+
             string[] commands = input.Split(';');
             string currentValue = commands[0];
 
@@ -63,9 +71,59 @@ namespace Typography
                 string command = Params[0];
 
                 currentValue = DoTypographyType(command.ParseAsType(), currentValue, Params);
+                currentValue = CheckForVars(currentValue);
             }
 
             return currentValue;
+        }
+
+        static string CheckForVars(string input)
+        {
+            string currentPercent = "";
+            string returnValue = "";
+            bool isInPercent = false;
+
+            for (int i = 0; i < input.Length; i++)
+            {
+                bool isFinalCharacter = i + 1 == input.Length;
+
+                if (input[i] == '\\' && !isFinalCharacter)
+                {
+                    string resultingChar = input[i].ToString() + input[i + 1].ToString();
+
+                    if (isInPercent)
+                        currentPercent += resultingChar;
+                    else
+                        returnValue += resultingChar;
+                    i++;
+                    continue;
+                }
+
+                if (input[i] == '%')
+                {
+                    isInPercent = !isInPercent;
+
+                    if (variables.ContainsKey(currentPercent))
+                        returnValue += variables[currentPercent];
+                    else if (!isInPercent)
+                    {
+                        returnValue += $"%{currentPercent}%";
+                    }
+
+                    currentPercent = "";
+                    continue;
+                }
+
+                if (isInPercent)
+                    currentPercent += input[i];
+                else
+                    returnValue += input[i];
+            }
+
+            if (isInPercent)
+                returnValue += "%" + currentPercent;
+
+            return returnValue;
         }
 
         public static bool StringIsTrue(string[] Params, int index, bool defaultValue)
@@ -96,177 +154,246 @@ namespace Typography
             if (Params.Length > 1)
                 toEncode = StringIsTrue(Params, 1, true);
 
-            try
+            switch (type)
             {
-                switch (type)
-                {
-                    case TypographyType.Normal:
-                        return input;
+                case TypographyType.None:
+                    return input;
 
-                    case TypographyType.Reverse:
-                        return BackwardsText.Flip(input);
+                case TypographyType.Normal:
+                    return input;
 
-                    case TypographyType.Upsideown:
-                        return Upsidedown.Upsideown(input);
+                case TypographyType.Reverse:
+                    return BackwardsText.Flip(input);
 
-                    case TypographyType.Randomize:
-                        return Randomize.Jumble(input);
+                case TypographyType.Upsideown:
+                    return Upsidedown.Upsideown(input);
 
-                    case TypographyType.error:
-                        Error(Params.Length > 1 ? Params[1] : "not yet implemented");
-                        return input;
+                case TypographyType.Randomize:
+                    return Randomize.Jumble(input);
 
-                    case TypographyType.append:
-                        new ProgressBar("Append", 1, 1).Print();
-                        return StringIsTrue(Params, 2, true) ? Append.ToEncoded(input, Params[1])
-                            : Append.FromEncoded(input, Params[1]);
+                case TypographyType.error:
+                    bool fromUser = Params[0].ToLower() == "error";
+                    string hardCodedError = $"{Params[0]} is an invalid command";
 
-                    case TypographyType.periodicTable:
-                        return toEncode ? PeriodicTable.Encode(input) : PeriodicTable.Decode(input);
+                    if (fromUser)
+                        Error(Params.Length >= 2 ? Params[1] : input);
+                    else
+                        Error(hardCodedError);
 
-                    case TypographyType.bigLetters:
-                        return toEncode ? BigLetters.Encode(input) : ConvertToHashtable.Encode(input);
+                    return input;
 
-                    case TypographyType.copyText:
-                        new ProgressBar("Copy", 1, 1).Print();
+                case TypographyType.append:
+                    new ProgressBar("Append", 1, 1).Print();
 
-                        if (input == string.Empty)
-                            Error("Cannot copy empty string!!");
-                        else
-                            Clipboard.SetText(input);
+                    return StringIsTrue(Params, 2, true) ? input + Params.safeGet(1) :
+                        Append.Decode(input, Params.safeGet(1));
 
-                        return input;
+                case TypographyType.periodicTable:
+                    return toEncode ? PeriodicTable.Encode(input) : PeriodicTable.Decode(input);
 
-                    case TypographyType.invertCondition:
-                        return InvertCondition.FlipCondition(input);
+                case TypographyType.bigLetters:
+                    return toEncode ? BigLetters.Encode(input) : ConvertToHashtable.Encode(input);
 
-                    case TypographyType.SentencePyramid:
-                        return SentencePyramid.sentencePyramid(input);
+                case TypographyType.copyText:
+                    new ProgressBar("Copy", 1, 1).Print();
 
-                    case TypographyType.sevenSegmentDisplay:
-                        return sevenSegDisplay.SevenSegDisplay(input).ToString();
+                    if (input == string.Empty)
+                        Error("Cannot copy empty string!!");
+                    else
+                        Clipboard.SetText(input);
 
-                    case TypographyType.replaceXwithY:
-                        return replaceXwithY.ReplaceXwithY(input, Params[1], Params[2]);
+                    return input;
 
-                    case TypographyType.longerWord:
-                        new ProgressBar("longer", 1, 1).Print();
-                        return longerAndShorter.Longer(input, Params[1]);
+                case TypographyType.invertCondition:
+                    return InvertCondition.FlipCondition(input);
 
-                    case TypographyType.shorterWord:
-                        new ProgressBar("shorter", 1, 1).Print();
-                        return longerAndShorter.Shorter(input, Params[1]);
+                case TypographyType.SentencePyramid:
+                    return SentencePyramid.sentencePyramid(input);
 
-                    case TypographyType.equal:
-                        new ProgressBar("equal", 1, 1).Print();
-                        return longerAndShorter.EqualTo(input, Params[1]).ToString();
+                case TypographyType.sevenSegmentDisplay:
+                    return sevenSegDisplay.SevenSegDisplay(input).ToString();
 
-                    case TypographyType.discordemoji:
-                        return toEncode ? TextToEncode.Encode(input, TextToEncode.discordEmoji, "Discord Emoji (decode)", " ") :
-                            TextToEncode.Decode(input, TextToEncode.discordEmoji, "Discord Emoji (decode)", " ");
+                case TypographyType.replaceXwithY:
+                    return replaceXwithY.ReplaceXwithY(input, Params.safeGet(1), Params.safeGet(2));
 
-                    case TypographyType.bubble:
-                        return toEncode ? TextToEncode.Encode(input, TextToEncode.BubbleText, "Bubble text (encode)") :
-                            TextToEncode.Decode(input, TextToEncode.BubbleText, "Bubble text (decode)");
+                case TypographyType.longerWord:
+                    new ProgressBar("longer", 1, 1).Print();
+                    return longerAndShorter.Longer(input, Params.safeGet(1));
 
-                    case TypographyType.blackbubble:
-                        return toEncode ? TextToEncode.Encode(input, TextToEncode.blackBubbleText, "Black bubble (encode)") :
-                            TextToEncode.Decode(input, TextToEncode.blackBubbleText, "Black bubble (decode)");
+                case TypographyType.shorterWord:
+                    new ProgressBar("shorter", 1, 1).Print();
+                    return longerAndShorter.Shorter(input, Params.safeGet(1));
 
-                    case TypographyType.userinput:
-                        return Console.ReadLine();
+                case TypographyType.equal:
+                    new ProgressBar("equal", 1, 1).Print();
+                    return longerAndShorter.EqualTo(input, Params.safeGet(1)).ToString();
 
-                    case TypographyType.repeat:
-                        return TextToEncode.Repeat(input, int.Parse(Params[1]), StringIsTrue(Params, 2, true));
+                case TypographyType.discordemoji:
+                    return toEncode ? TextToEncode.Encode(input, TextToEncode.discordEmoji, "Discord Emoji (decode)", " ") :
+                        TextToEncode.Decode(input, TextToEncode.discordEmoji, "Discord Emoji (decode)", " ");
 
-                    case TypographyType.oldSchool:
-                        return toEncode ? TextToEncode.Encode(input, TextToEncode.oldSchool, "Old school (encode)") :
-                            TextToEncode.Decode(input, TextToEncode.oldSchool, "Old school (decode)");
+                case TypographyType.bubble:
+                    return toEncode ? TextToEncode.Encode(input, TextToEncode.BubbleText, "Bubble text (encode)") :
+                        TextToEncode.Decode(input, TextToEncode.BubbleText, "Bubble text (decode)");
 
-                    case TypographyType.write:
-                        new ProgressBar("Write to file", 1, 1).Print();
-                        if (!File.Exists(Params[1]))
+                case TypographyType.blackbubble:
+                    return toEncode ? TextToEncode.Encode(input, TextToEncode.blackBubbleText, "Black bubble (encode)") :
+                        TextToEncode.Decode(input, TextToEncode.blackBubbleText, "Black bubble (decode)");
+
+                case TypographyType.userinput:
+                    return Console.ReadLine();
+
+                case TypographyType.repeat:
+                    if (!int.TryParse(Params.safeGet(1), out int res))
+                        Error($"'{Params.safeGet(1)}' is not a string.");
+
+                    return TextToEncode.Repeat(input, res, StringIsTrue(Params, 2, true));
+
+                case TypographyType.oldSchool:
+                    return toEncode ? TextToEncode.Encode(input, TextToEncode.oldSchool, "Old school (encode)") :
+                        TextToEncode.Decode(input, TextToEncode.oldSchool, "Old school (decode)");
+
+                case TypographyType.write:
+                    new ProgressBar("Write to file", 1, 1).Print();
+
+                    try
+                    {
+                        if (!File.Exists(Params.safeGet(1)))
                         {
-                            Error($"{Params[1]} is not a file. Cannot write to");
+                            Error($"{Params.safeGet(1)} is not a file. Cannot write to");
                             return input;
                         }
-                        File.WriteAllText(Params[1], input);
-                        return input;
+                        File.WriteAllText(Params.safeGet(1), input);
+                    }
+                    catch (IOException exc)
+                    {
+                        Error("An error occured when writing to disc: " + exc.Message);
+                    }
+                    return input;
 
-                    case TypographyType.read:
-                        new ProgressBar("Read from file", 1, 1).Print();
+                case TypographyType.read:
+                    new ProgressBar("Read from file", 1, 1).Print();
+
+                    try
+                    {
                         if (!File.Exists(input))
                         {
                             Error($"{input} is not a file. Cannot read from");
                             return input;
                         }
                         return File.ReadAllText(input);
+                    }
+                    catch (IOException exc)
+                    {
+                        Error("An error occured when reading from disc: " + exc.Message);
+                        return input;
+                    }
 
-                    case TypographyType.zalgo:
+                case TypographyType.zalgo:
+                    if (Params.Length == 1)
+                        return Zalgo.Encode(input);
 
-                        if (Params.Length == 1)
-                            return Zalgo.Encode(input);
+                    if (Params.Length == 2)
+                    {
+                        return StringIsTrue(Params, 1, true) ? Zalgo.Encode(input) :
+                            Zalgo.Decode(input);
+                    }
 
-                        if (Params.Length == 2)
+                    uint zalgup = 0;
+                    uint zalgmid = 0;
+                    uint zalgdown = 0;
+
+                    if (!uint.TryParse(Params.safeGet(1), out zalgup) ||
+                        !uint.TryParse(Params.safeGet(2), out zalgmid) ||
+                        !uint.TryParse(Params.safeGet(3), out zalgdown))
+                    {
+                        Error($"Either {Params.safeGet(1)}, {Params.safeGet(2)}, or {Params.safeGet(3)} was not a positive number");
+                        return input;
+                    }
+
+                    return Zalgo.Encode(input, zalgup, zalgmid, zalgdown);
+
+                case TypographyType.expand:
+                    if (!uint.TryParse(Params.safeGet(1), out uint expandness))
+                    {
+                        Error($"{Params.safeGet(1)} is not a positive number");
+                        return input;
+                    }
+                    return StringIsTrue(Params, 2, true) ? expand.Encode(input, expandness) :
+                        expand.Decode(input, expandness);
+
+                case TypographyType.doubleStruck:
+                    return toEncode ? TextToEncode.Encode(input, TextToEncode.doubleStruck, "Double struck (encode)") :
+                        TextToEncode.Decode(input, TextToEncode.doubleStruck, "Double struck (decode)");
+
+                case TypographyType.discordSpoiler:
+                    return toEncode ? discordSpoiler.Encode(input) : discordSpoiler.Decode(input);
+
+                case TypographyType.morsecode:
+                    if (Params.Length >= 2)
+                        if (Params[1] == "sing")
+                            return MorseCodeSing.SingMorseCode(input, StringIsTrue(Params, 2, true));
+
+                    return toEncode ? TextToEncode.Encode(input, TextToEncode.morseCode, "Morse code (encode)", " / ") :
+                        TextToEncode.Decode(input, TextToEncode.morseCode, "Morse code (decode)", "/");
+
+                case TypographyType.nato:
+                    return toEncode ? Phonetics.Encode(input, Phonetics.NATO, "NATO (encode)") :
+                        Phonetics.Decode(input, "NATO (decode)");
+
+                case TypographyType.binary:
+                    return toEncode ? BinaryText.Encode(input) : BinaryText.Decode(input);
+
+                case TypographyType.number:
+                    int BaseForEncoding = 10;
+                    int padding = 2;
+
+                    if (Params.Length >= 2)
+                    {
+                        if (!int.TryParse(Params.safeGet(2), out BaseForEncoding) ||
+                            !int.TryParse(Params.safeGet(3), out padding))
                         {
-                            return StringIsTrue(Params, 1, true) ? Zalgo.Encode(input) :
-                                Zalgo.Decode(input);
+                            Error($"Either {Params.safeGet(2)} or {Params.safeGet(3)} was not an int");
                         }
+                    }
 
-                        uint zalgup = uint.Parse(Params[1]);
-                        uint zalgmid = uint.Parse(Params[2]);
-                        uint zalgdown = uint.Parse(Params[3]);
+                    return toEncode ? Number.Encode(input, BaseForEncoding, padding) :
+                        Number.Decode(input, BaseForEncoding, padding);
 
-                        return Zalgo.Encode(input, zalgup, zalgmid, zalgdown);
-                    case TypographyType.expand:
-                        return StringIsTrue(Params, 2, true) ? expand.Encode(input, int.Parse(Params[1])) :
-                            expand.Decode(input, int.Parse(Params[1]));
+                case TypographyType.hash:
+                    return Hashing.Hash(input, Params.safeGet(1));
 
-                    case TypographyType.doubleStruck:
-                        return toEncode ? TextToEncode.Encode(input, TextToEncode.doubleStruck, "Double struck (encode)") :
-                            TextToEncode.Decode(input, TextToEncode.doubleStruck, "Double struck (decode)");
+                case TypographyType.googleTranslate:
+                    return GTranslator.Translate(input, Params.safeGet(1), Params.safeGet(2));
 
-                    case TypographyType.discordSpoiler:
-                        return toEncode ? discordSpoiler.Encode(input) : discordSpoiler.Decode(input);
+                case TypographyType.nonsensify:
+                    return GTranslator.Nonsense(input);
 
-                    case TypographyType.morsecode:
-                        if (Params.Length >= 2)
-                            if (Params[1] == "sing")
-                                return MorseCodeSing.SingMorseCode(input, StringIsTrue(Params, 2, true));
+                case TypographyType.caesar:
+                    if (!int.TryParse(Params.safeGet(1), out int CaesarAmount))
+                    {
+                        Error($"{Params.safeGet(1)} was not an int");
+                        return input;
+                    }
 
-                        return toEncode ? TextToEncode.Encode(input, TextToEncode.morseCode, "Morse code (encode)", " / ") :
-                            TextToEncode.Decode(input, TextToEncode.morseCode, "Morse code (decode)", "/");
+                    return Caesar.Encode(input, CaesarAmount);
 
-                    case TypographyType.nato:
-                        return toEncode ? Phonetics.Encode(input, Phonetics.NATO, "NATO (encode)") :
-                            Phonetics.Decode(input, "NATO (decode)");
+                case TypographyType.capsRandomizer:
+                    return capsRandomizer.Randomize(input);
 
-                    case TypographyType.binary:
-                        return toEncode ? BinaryText.Encode(input) : BinaryText.Decode(input);
+                case TypographyType.owoify:
+                    return owoify.Encode(input);
 
-                    case TypographyType.number:
-                        int BaseForEncoding = 10;
-                        int padding = 2;
+                case TypographyType.set:
+                    variables.Add(Params.safeGet(1), input);
+                    return input;
 
-                        if (Params.Length >= 2)
-                        {
-                            BaseForEncoding = int.Parse(Params[2]);
-                            padding = int.Parse(Params[3]);
-                        }
-
-                        return toEncode ? Number.Encode(input, BaseForEncoding, padding) :
-                            Number.Decode(input, BaseForEncoding, padding);
-                    case TypographyType.hash:
-                        return Hashing.Hash(input, Params[1]);
-                    default:
-                        break;
-                }
+                case TypographyType.change:
+                    return Params.safeGet(1);
+                default:
+                    break;
             }
-            catch (IndexOutOfRangeException exc)
-            {
-                Error($"Not enough params!\ndetails: {exc}");
-                return input;
-            }
+
             Error($"{type} is not yet implemented");
             return input;
         }
@@ -274,13 +401,14 @@ namespace Typography
         public static void Error(string message)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(message);
+            Console.WriteLine("\n" + message);
             Console.ResetColor();
         }
 
         public static string AllTypes(string Seperator)
         {
             string returnValue = "";
+
             foreach (TypographyType item in Enum.GetValues(typeof(TypographyType)))
             {
                 returnValue += Seperator + item.ToReadableString();
@@ -329,9 +457,16 @@ namespace Typography
         binary,
         number,
         hash,
+        googleTranslate,
+        nonsensify,
+        caesar,
+        capsRandomizer,
+        owoify,
+        set,
+        change,
     }
 
-    public static class TypographyTypesExtension
+    public static class TypographyExtention
     {
         public static string ToReadableString(this TypographyType input)
         {
@@ -403,6 +538,20 @@ namespace Typography
                     return "number                  number~encode/decode~base~padding";
                 case TypographyType.hash:
                     return "hash                    hash~sha1/sha256/sha384/sha512/md5";
+                case TypographyType.googleTranslate:
+                    return "google translate        translate~fromLanguage~toLanguage";
+                case TypographyType.nonsensify:
+                    return "nonsensify              nonsensify";
+                case TypographyType.caesar:
+                    return "caesar cipher           caesar~chars";
+                case TypographyType.capsRandomizer:
+                    return "cAps RaANdoMIzer        caps";
+                case TypographyType.owoify:
+                    return "owoify                  owoify";
+                case TypographyType.set:
+                    return "set variable            set~name";
+                case TypographyType.change:
+                    return "change current string   change~value";
                 default:
                     return input.ToString();
             }
@@ -480,10 +629,58 @@ namespace Typography
                     return TypographyType.number;
                 case "hash":
                     return TypographyType.hash;
+                case "translate":
+                    return TypographyType.googleTranslate;
+                case "nonsensify":
+                    return TypographyType.nonsensify;
+                case "caesar":
+                    return TypographyType.caesar;
+                case "caps":
+                    return TypographyType.capsRandomizer;
+                case "owoify":
+                    return TypographyType.owoify;
+                case "set":
+                    return TypographyType.set;
+                case "change":
+                    return TypographyType.change;
                 case "":
                 case " ":
                     return TypographyType.None;
             }
+        }
+
+        public static T safeGet<T>(this T[] array, int index, T defaultValue)
+        {
+            if (array.Length == 0)
+            {
+                Program.Error("Not any params (0)");
+                return defaultValue;
+            }
+
+            if (array.Length <= index)
+            {
+                Program.Error($"{array[0]} does not have enough params ({array.Length})");
+                return array[0];
+            }
+
+            return array[index];
+        }
+
+        public static T safeGet<T>(this T[] array, int index)
+        {
+            if (array.Length == 0)
+            {
+                Program.Error("Not any params (0)");
+                return default(T);
+            }
+
+            if (array.Length <= index)
+            {
+                Program.Error($"{array[0]} does not have enough params ({array.Length})");
+                return default(T);
+            }
+
+            return array[index];
         }
 
         public static string toString(this char[] input)
@@ -513,6 +710,16 @@ namespace Typography
             }
 
             return returnValue;
+        }
+
+        public static char ToLower(this char str)
+        {
+            return Char.ToLower(str);
+        }
+
+        public static char ToUpper(this char str)
+        {
+            return Char.ToUpper(str);
         }
     }
 }

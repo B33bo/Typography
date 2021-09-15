@@ -75,6 +75,19 @@ namespace Typography
             {"˙", "."},
             {"?", "¿"},
             {"¿", "?"},
+            {"1", "l"},
+            {"2", "ᄅ"},
+            {"ᄅ", "2"},
+            {"3", "Ɛ"},
+            {"Ɛ", "3"},
+            {"4", "ㄣ"},
+            {"ㄣ", "4"},
+            {"5", "ϛ"},
+            {"6", "9"},
+            {"ϛ", "5"},
+            {"7", "ㄥ"},
+            {"ㄥ", "7"},
+            {"9", "6"},
         };
 
         public static string Upsideown(string input)
@@ -97,11 +110,6 @@ namespace Typography
             }
 
             return returnValue;
-        }
-
-        public static char toLower(this char str)
-        {
-            return Char.ToLower(str);
         }
     }
 }

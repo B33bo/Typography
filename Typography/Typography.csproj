@@ -26,6 +26,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="GoogleTranslateAPI">
+      <HintPath>..\..\..\..\Documents\GoogleTranslateAPI_0.4_alpha\bin\DotNet\GoogleTranslateAPI.dll</HintPath>
+    </Reference>
     <Reference Include="System.Drawing.Common">
       <HintPath>..\..\..\..\..\..\System.Drawing.Common.dll</HintPath>
     </Reference>
@@ -35,6 +38,10 @@
     <Reference Include="System.Windows.Forms">
       <HintPath>..\..\..\..\..\..\Windows\Microsoft.NET\Framework\v2.0.50727\System.Windows.Forms.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="_BUILD\" />
   </ItemGroup>
 
 </Project>

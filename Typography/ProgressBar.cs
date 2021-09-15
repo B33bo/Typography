@@ -19,6 +19,9 @@ namespace Typography
         {
             get
             {
+                if (MaxValue == 0)
+                    return 1;
+
                 return Value / (float)MaxValue;
             }
         }
@@ -45,8 +48,10 @@ namespace Typography
         public override string ToString()
         {
             uint chunks = Settings.ProgressBarBlocks;
-
             int ChunksToFill = (int)MathF.Floor(Percentage * chunks);
+
+            if (MaxValue == 0)
+                ChunksToFill = (int)chunks;
 
             string ProgressValue = "";
 
@@ -75,6 +80,7 @@ namespace Typography
             ProcessName = processName;
             Value = 0;
             MaxValue = maxValue;
+
             Start();
         }
 

@@ -173,12 +173,16 @@ namespace Typography
             {
 				if (flippedElements.ContainsKey(item))
 					returnValue += $" {flippedElements[item]}";
+				else if (item == "" || item == "\n" || item == "\r" || item == " ")
+					continue;
 				else
 					Program.Error($"Periodic table:: No periodic table character for {item}");
 
 				bar.Increase();
             }
 
+			if (returnValue.Length <= 1)
+				return "";
 			//Apparantly this is the same as returnValue.substring(1) and that is the coolest thing in the world
 			//Oh yeah and it substrings at one because it always starts with a space unless you do that
 			return returnValue[1..];

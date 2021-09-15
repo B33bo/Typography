@@ -37,7 +37,6 @@ namespace Typography
             for (int i = 0; i < Input.Length; i++)
                 indexesAllowed.Add(i);
 
-            Console.WriteLine(indexesAllowed.Count);
             string returnValue = "";
             Random rng = new Random();
 
@@ -56,13 +55,11 @@ namespace Typography
 
     public static class Append
     {
-        public static string ToEncoded(string Input, string append)
+        public static string Decode(string Input, string append)
         {
-            return Input + append;
-        }
+            if (Input.Length <= append.Length)
+                return "";
 
-        public static string FromEncoded(string Input, string append)
-        {
             return Input.Substring(0, Input.Length - append.Length);
         }
     }
@@ -101,6 +98,13 @@ namespace Typography
         public static string ReplaceXwithY(string Input, string X, string Y)
         {
             new ProgressBar("Replace", 1, 1).Print();
+
+            if (X.Length == 0 || Y.Length == 0)
+            {
+                Program.Error($"Cannot replace word with something of zero length");
+                return Input;
+            }
+
             return Input.Replace(X, Y);
         }
     }
@@ -109,7 +113,7 @@ namespace Typography
     {
         public static bool SevenSegDisplay(string Input)
         {
-            ProgressBar bar = new ProgressBar("7 seg display", 1);
+            ProgressBar bar = new ProgressBar("7 seg display", 1, 1);
             //letters that cannot be put in 7 seg diplay
             Regex sevenSegDisplay = new Regex("g | k | m | v | w | x | z");
 
@@ -138,9 +142,9 @@ namespace Typography
 
     public static class expand
     {
-        public static string Encode(string Input, int amount)
+        public static string Encode(string Input, uint amount)
         {
-            ProgressBar bar = new ProgressBar("Expand (encode)", Input.Length * amount);
+            ProgressBar bar = new ProgressBar("Expand (encode)", (int)(Input.Length * amount));
             string returnValue = "";
             for (int i = 0; i < Input.Length; i++)
             {
@@ -154,11 +158,11 @@ namespace Typography
             return returnValue;
         }
 
-        public static string Decode(string Input, int amount)
+        public static string Decode(string Input, uint amount)
         {
-            ProgressBar bar = new ProgressBar("Expand (encode)", Input.Length / amount);
+            ProgressBar bar = new ProgressBar("Expand (encode)", (int)(Input.Length / amount));
             string returnValue = "";
-            for (int i = 0; i < Input.Length; i += amount)
+            for (int i = 0; i < Input.Length; i += (int)amount)
             {
                 bar.Increase();
                 returnValue += Input[i];
@@ -237,9 +241,21 @@ namespace Typography
             ProgressBar bar = new ProgressBar("Number (encode)", input.Length);
             StringBuilder sb = new StringBuilder();
 
+            if (NumBase <= 1)
+            {
+                Program.Error($"Number: base must be above 1 ({NumBase})");
+                return input;
+            }
+            if (padding < 1)
+            {
+                Program.Error($"Number: padding must be above 0 ({padding})");
+                return input;
+            }
+
             foreach (char c in input.ToCharArray())
             {
                 bar.Increase();
+
                 sb.Append(Convert.ToString(c, NumBase).PadLeft(padding, '0'));
             }
             return sb.ToString();
@@ -317,6 +333,67 @@ namespace Typography
                 Program.Error("Cannot sing morse code on linux");
                 return false;
             }
+        }
+    }
+
+    public static class capsRandomizer
+    {
+        public static string Randomize(string Input)
+        {
+            ProgressBar bar = new ProgressBar("Randomize", Input.Length);
+            string returnVal = "";
+            Random rng = new Random();
+
+            for (int i = 0; i < Input.Length; i++)
+            {
+                bar.Increase();
+                bool UpperOrLower = rng.Next(0, 2) == 1;
+
+                returnVal += UpperOrLower ? Input[i].ToUpper() : Input[i].ToLower();
+            }
+
+            return returnVal;
+        }
+    }
+
+    public static class owoify
+    {
+        static readonly char[] vowels = new char[]
+        {
+            'a',
+            'e',
+            'i',
+            'o',
+            'u'
+        };
+
+        public static string Encode(string input)
+        {
+            ProgressBar bar = new ProgressBar("Owoify", input.Length);
+            string returnValue = "";
+
+            for (int i = 0; i < input.Length; i++)
+            {
+                bar.Increase();
+
+                if (input.Length == 1)
+                {
+                    returnValue += input[i];
+                    break;
+                }
+
+                returnValue += input[i];
+
+                if (input[i].ToLower() == 'n' && vowels.Contains(input[i + 1].ToLower()))
+                    returnValue += "y";
+
+                else if (input[i] == '!')
+                    returnValue += " :3";
+            }
+
+            returnValue = returnValue.ToLower().Replace("ove", "uv").Replace("r", "w");
+
+            return returnValue;
         }
     }
 }
