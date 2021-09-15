@@ -10,7 +10,7 @@ namespace Typography
         {
             ProgressBar bar = new ProgressBar("Flip Condition", 1);
 
-            Input = Input.ToLower();            
+            Input = Input.ToLower();
             Condition input;
 
             if (!Enum.TryParse(Input, out input))
@@ -90,6 +90,6 @@ namespace Typography
 
             {Condition.xor, "^"},
             {Condition.xnor, "!(a^b)"},
-    };
+        };
     }
 }
