@@ -15,6 +15,7 @@ namespace Typography
             for (int i = 0; i < lines.Length; i++)
             {
                 bar.Increase();
+
                 if (lines[i] == "\n" || lines[i] == "" || lines[i] == " " || lines[i] == "\r")
                     continue;
 

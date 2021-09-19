@@ -225,6 +225,8 @@ namespace Typography
             List<byte> byteList = new List<byte>();
             ProgressBar bar = new("Binary (decode)", input.Length);
 
+            input = input.Replace(" ", "");
+
             for (int i = 0; i < input.Length; i += 8)
             {
                 bar.Increase();
@@ -236,14 +238,15 @@ namespace Typography
 
     public static class Number
     {
+        public static int[] bases = new int[] { 2, 8, 10, 16 };
         public static string Encode(string input, int NumBase, int padding)
         {
             ProgressBar bar = new ProgressBar("Number (encode)", input.Length);
             StringBuilder sb = new StringBuilder();
 
-            if (NumBase <= 1)
+            if (!bases.Contains(NumBase))
             {
-                Program.Error($"Number: base must be above 1 ({NumBase})");
+                Program.Error($"Number: base must be 2,4,8,16 ({NumBase})");
                 return input;
             }
             if (padding < 1)
@@ -263,8 +266,15 @@ namespace Typography
 
         public static string Decode(string input, int NumBase, int padding)
         {
+            input = input.Replace(" ", "");
             ProgressBar bar = new ProgressBar("Number (decode)", input.Length);
             List<byte> byteList = new List<byte>();
+
+            if (!bases.Contains(NumBase))
+            {
+                Program.Error($"Number: base must be 2,4,8,16 ({NumBase})");
+                return input;
+            }
 
             for (int i = 0; i < input.Length; i += 8)
             {
