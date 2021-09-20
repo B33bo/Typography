@@ -110,7 +110,10 @@ namespace Typography
                     if (!int.TryParse(Params.safeGet(1), out int res))
                         return Program.Error($"'{Params.safeGet(1)}' is not a string.", input);
 
-                    return TextToEncode.Repeat(input, res, Params.safeGet(2, "true").isTrue());
+                    bool isTrue = Params.safeGet(2, "true").isTrue();
+
+                    Console.WriteLine(Params.safeGet(2, "true"));
+                    return TextToEncode.Repeat(input, res, isTrue);
 
                 case TypographyType.oldSchool:
                     return toEncode ? TextToEncode.Encode(input, TextToEncode.oldSchool, "Old school (encode)") :
@@ -199,7 +202,7 @@ namespace Typography
                 case TypographyType.binary:
                     return toEncode ? BinaryText.Encode(input) : BinaryText.Decode(input);
 
-                case TypographyType.number:
+                case TypographyType.NumberBase:
                     int BaseForEncoding = 10;
                     int padding = 2;
 
@@ -247,7 +250,10 @@ namespace Typography
                     return owoify.Encode(input);
 
                 case TypographyType.set:
-                    methodCode.variables.Add(Params.safeGet(1), input);
+                    if (methodCode.variables.ContainsKey(Params.safeGet(1)))
+                        methodCode.variables[Params.safeGet(1)] = input;
+                    else
+                        methodCode.variables.Add(Params.safeGet(1), input);
                     return input;
 
                 case TypographyType.change:
@@ -276,7 +282,7 @@ namespace Typography
                     }
 
                     if (substringLength < 0)
-                        return input.Substring(start);
+                        return input[start..];
 
                     return input.Substring(start, substringLength);
 
@@ -361,6 +367,19 @@ namespace Typography
                     return toEncode ? TextToEncode.Encode(input, TextToEncode.leetSpeak, "1337 speak (encode)", "", "", false) :
                         TextToEncode.Decode(input, TextToEncode.leetSpeak, "1337 speak (decode)", "", false);
 
+                case TypographyType.StandardGalacticAlphabet:
+                    return toEncode ? TextToEncode.Encode(input, TextToEncode.StandardGalacticAlphabet, "Standard galactic (encode)") :
+                        TextToEncode.Decode(input, TextToEncode.StandardGalacticAlphabet, "Standard galactic (decode)");
+
+                case TypographyType.british:
+                    return toEncode ? British.Encode(input) : British.Decode(input);
+
+                case TypographyType.numericAlphabet:
+                    return toEncode ? NumericAlphabet.Encode(input) : NumericAlphabet.Decode(input);
+
+                case TypographyType.braille:
+                    return toEncode ? TextToEncode.Encode(input, TextToEncode.braille, "Braille (Encode)"):
+                        Braille.Decode(input);
                 default:
                     break;
             }
@@ -435,8 +454,8 @@ namespace Typography
                     return "nato (alfa, bravo...)   nato~encode/decode";
                 case TypographyType.binary:
                     return "binary                  binary~encode/decode";
-                case TypographyType.number:
-                    return "number                  number~encode/decode~base~padding";
+                case TypographyType.NumberBase:
+                    return "NumberBase              NumberBase~encode/decode~base~padding";
                 case TypographyType.hash:
                     return "hash                    hash~sha1/sha256/sha384/sha512/md5";
                 case TypographyType.googleTranslate:
@@ -485,6 +504,14 @@ namespace Typography
                     return "if bool else            if~callIfTrue~callIfFalse";
                 case TypographyType.leetspeak:
                     return "1337 5p34k              1337~encode/decode";
+                case TypographyType.StandardGalacticAlphabet:
+                    return "Standard galactic       galactic~encode/decode";
+                case TypographyType.british:
+                    return "Bri'ish                 british~encode/decode";
+                case TypographyType.numericAlphabet:
+                    return "Numeric (A=1, B=2)      numeric~encode/decode";
+                case TypographyType.braille:
+                    return "Braille                 braille~encode/decode";
                 default:
                     return input.ToString();
             }
@@ -558,8 +585,8 @@ namespace Typography
                     return TypographyType.nato;
                 case "binary":
                     return TypographyType.binary;
-                case "number":
-                    return TypographyType.number;
+                case "numberbase":
+                    return TypographyType.NumberBase;
                 case "hash":
                     return TypographyType.hash;
                 case "translate":
@@ -609,10 +636,83 @@ namespace Typography
                 case "1337":
                 case "leet":
                     return TypographyType.leetspeak;
+                case "galactic":
+                    return TypographyType.StandardGalacticAlphabet;
+                case "british":
+                    return TypographyType.british;
+                case "numeric":
+                    return TypographyType.numericAlphabet;
+                case "braille":
+                    return TypographyType.braille;
                 case "":
                 case " ":
                     return TypographyType.None;
             }
         }
+    }
+
+    public enum TypographyType
+    {
+        None,
+        Normal,
+        Reverse,
+        Upsideown,
+        Randomize,
+        error,
+        append,
+        periodicTable,
+        bigLetters,
+        copyText,
+        invertCondition,
+        SentencePyramid,
+        sevenSegmentDisplay,
+        replaceXwithY,
+        longerWord,
+        shorterWord,
+        equal,
+        discordemoji,
+        bubble,
+        blackbubble,
+        userinput,
+        repeat,
+        oldSchool,
+        write,
+        read,
+        zalgo,
+        expand,
+        doubleStruck,
+        discordSpoiler,
+        morsecode,
+        nato,
+        binary,
+        NumberBase,
+        hash,
+        googleTranslate,
+        nonsensify,
+        caesar,
+        capsRandomizer,
+        owoify,
+        set,
+        change,
+        substring,
+        appendBehind,
+        length,
+        uppercase,
+        lowercase,
+        smallcaps,
+        bold,
+        italics,
+        bolditalics,
+        clear,
+        htmlText,
+        call,
+        delay,
+        If,
+        IfElse,
+        leetspeak,
+        StandardGalacticAlphabet,
+        british,
+        numericAlphabet,
+        braille,
     }
 }

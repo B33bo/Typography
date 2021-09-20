@@ -406,4 +406,111 @@ namespace Typography
             return returnValue;
         }
     }
+
+    public static class NumericAlphabet
+    {
+        public static string Encode(string input)
+        {
+            ProgressBar bar = new ("Numeric Alphabet (Encode)", input.Length);
+            string returnValue = "";
+
+            for (int i = 0; i < input.Length; i++)
+            {
+                bar.Increase();
+
+                int index = AlphabetAndWords.alphabet.IndexOf(input[i].ToLower());
+
+                if (input[i] == ' ')
+                {
+                    returnValue += " 0";
+                    continue;
+                }
+
+                if (index == -1)
+                {
+                    Program.Error($"{input[i]} is not in the alphabet");
+                    returnValue += $" {input[i]}";
+                    continue;
+                }
+
+                returnValue += " " + (index + 1);
+            }
+
+            if (returnValue.Length == 0)
+                return returnValue;
+
+            return returnValue[1..];
+        }
+
+        public static string Decode(string input)
+        {
+            ProgressBar bar = new ProgressBar("Numeric Alphabet (Decode)", input.Length);
+            string[] splitInput = input.Split(' ');
+            string returnValue = "";
+
+            for (int i = 0; i < splitInput.Length; i++)
+            {
+                bar.Increase();
+
+                if (!uint.TryParse(splitInput[i], out uint currentChar))
+                {
+                    Program.Error($"{splitInput[i]} is not a positive number");
+                    returnValue += splitInput[i];
+                    continue;
+                }
+
+                if (currentChar == 0)
+                {
+                    returnValue += " ";
+                    continue;
+                }
+
+                currentChar--;
+
+                if (AlphabetAndWords.alphabet.Count <= currentChar)
+                {
+                    Program.Error($"{currentChar} is not in the alphabet (1-26)");
+                    returnValue += currentChar;
+                    continue;
+                }
+
+                returnValue += AlphabetAndWords.alphabet[(int)currentChar];
+            }
+
+            return returnValue;
+        }
+    }
+
+    public static class Braille
+    {
+        public static string Decode(string Input)
+        {
+            ProgressBar bar = new("Braille (Decode)", Input.Length);
+            Dictionary<string, string> targetdict = TextToEncode.braille.FlipDict();
+            string returnValue = "";
+
+            for (int i = 0; i < Input.Length; i++)
+            {
+                bar.Increase();
+
+                if (i + 1 < Input.Length)
+                {
+                    string currentPlus1 = $"{Input[i]}{Input[i + 1]}";
+                    if (targetdict.ContainsKey(currentPlus1))
+                    {
+                        returnValue += currentPlus1;
+                        i++;
+                        continue;
+                    }
+                }
+
+                if (targetdict.ContainsKey(Input[i].ToString()))
+                    returnValue += targetdict[Input[i].ToString()];
+                else
+                    returnValue += Program.Error($"{Input[i]} is not a braille character!", Input[i].ToString());
+            }
+
+            return returnValue;
+        }
+    }
 }

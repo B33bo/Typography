@@ -569,59 +569,33 @@ namespace Typography
         };
 
         public static Dictionary<string, string> smallcaps = new Dictionary<string, string>()
-        {
-            {"A", "ᴀ"},
-            {"a", "a"},
-            {"B", "ʙ"},
-            {"b", "b"},
-            {"C", "ᴄ"},
-            {"c", "c"},
-            {"D", "ᴅ"},
-            {"d", "d"},
-            {"E", "ᴇ"},
-            {"e", "e"},
-            {"F", "ꜰ"},
-            {"f", "f"},
-            {"G", "ɢ"},
-            {"g", "g"},
-            {"H", "ʜ"},
-            {"h", "h"},
-            {"I", "ɪ"},
-            {"i", "i"},
-            {"J", "ᴊ"},
-            {"j", "j"},
-            {"K", "ᴋ"},
-            {"k", "k"},
-            {"L", "ʟ"},
-            {"l", "l"},
-            {"M", "ᴍ"},
-            {"m", "m"},
-            {"N", "ɴ"},
-            {"n", "n"},
-            {"O", "ᴏ"},
-            {"o", "o"},
-            {"P", "ᴘ"},
-            {"p", "p"},
-            {"Q", "Q"},
-            {"q", "q"},
-            {"R", "ʀ"},
-            {"r", "r"},
-            {"S", "ꜱ"},
-            {"s", "s"},
-            {"T", "ᴛ"},
-            {"t", "t"},
-            {"U", "ᴜ"},
-            {"u", "u"},
-            {"V", "ᴠ"},
-            {"v", "v"},
-            {"W", "ᴡ"},
-            {"w", "w"},
-            {"X", "X"},
-            {"x", "x"},
-            {"Y", "ʏ"},
-            {"y", "y"},
-            {"Z", "ᴢ"},
-            {"z", "z"},
+        {   
+            {"a", "ᴀ"},
+            {"b", "ʙ"},
+            {"c", "ᴄ"},
+            {"d", "ᴅ"},
+            {"e", "ᴇ"},
+            {"f", "ꜰ"},
+            {"g", "ɢ"},
+            {"h", "ʜ"},
+            {"i", "ɪ"},
+            {"j", "ᴊ"},
+            {"k", "ᴋ"},
+            {"l", "ʟ"},
+            {"m", "ᴍ"},
+            {"n", "ɴ"},
+            {"o", "ᴏ"},
+            {"p", "ᴘ"},
+            {"q", "Q"},
+            {"r", "ʀ"},
+            {"s", "ꜱ"},
+            {"t", "ᴛ"},
+            {"u", "ᴜ"},
+            {"v", "ᴠ"},
+            {"w", "ᴡ"},
+            {"x", "X"},
+            {"y", "ʏ"},
+            {"z", "ᴢ"},
         };
 
         public static Dictionary<string, string> textToHtml = new Dictionary<string, string>()
@@ -741,6 +715,91 @@ namespace Typography
             {"z", "2"},
         };
 
+        public static Dictionary<string, string> StandardGalacticAlphabet = new Dictionary<string, string>()
+        {
+            {"a", "ᔑ"},
+            {"b", "ʖ"},
+            {"c", "ᓵ"},
+            {"d", "↸"},
+            {"e", "ᒷ"},
+            {"f", "⎓"},
+            {"g", "⊣"},
+            {"h", "⍑"},
+            {"i", "╎"},
+            {"j", "⋮"},
+            {"k", "ꖌ"},
+            {"l", "ꖎ"},
+            {"m", "ᒲ"},
+            {"n", "リ"},
+            {"o", "𝙹"},
+            {"p", "!¡"},
+            {"q", "ᑑ"},
+            {"r", "∷"},
+            {"s", "ᓭ"},
+            {"t", "ℸ ̣"},
+            {"u", "⚍"},
+            {"v", "⍊"},
+            {"w", "∴"},
+            {"x", " ̇/"},
+            {"y", "||"},
+            {"z", "⨅"},
+        };
+
+        public static Dictionary<string, string> braille = new Dictionary<string, string>()
+        {
+            {"a", "⠁"},
+            {"b", "⠃"},
+            {"c", "⠉"},
+            {"d", "⠙"},
+            {"e", "⠑"},
+            {"f", "⠋"},
+            {"g", "⠛"},
+            {"h", "⠓"},
+            {"i", "⠊"},
+            {"j", "⠚"},
+            {"k", "⠅"},
+            {"l", "⠇"},
+            {"m", "⠍"},
+            {"n", "⠝"},
+            {"o", "⠕"},
+            {"p", "⠏"},
+            {"q", "⠟"},
+            {"r", "⠗"},
+            {"s", "⠎"},
+            {"t", "⠞"},
+            {"u", "⠥"},
+            {"v", "⠧"},
+            {"w", "⠺"},
+            {"x", "⠭"},
+            {"y", "⠽"},
+            {"z", "⠵"},
+            {"1", "⠼⠁"},
+            {"2", "⠼⠃"},
+            {"3", "⠼⠉"},
+            {"4", "⠼⠙"},
+            {"5", "⠼⠑"},
+            {"6", "⠼⠋"},
+            {"7", "⠼⠛"},
+            {"8", "⠼⠓"},
+            {"9", "⠼⠊"},
+            {"0", "⠼⠚"},
+            {"-", "⠤"},
+            {"'", "⠄"},
+            {"”", "⠄⠶"},
+            {"“", "⠄⠶"},
+            {"*", "⠔"},
+            {"\"", "⠄⠶"},
+            {"?", "⠦"},
+            {")", "⠐⠜"},
+            {"(", "⠐⠣"},
+            {"!", "⠖"},
+            {".", "⠲"},
+            {":", "⠒"},
+            {";", "⠆"},
+            {",", "⠂"},
+            {"", "⠼" },
+        };
+
         public static string[] ToStringArray(this char[] c)
         {
             string[] returnValue = new string[c.Length];
@@ -753,8 +812,7 @@ namespace Typography
             return returnValue;
         }
 
-        public static string Encode(string Input, Dictionary<string, string> keys, string ProgressBarName,
-            string seperator = "", string splitter = "", bool errors = true)
+        public static string Encode(string Input, Dictionary<string, string> keys, string Name, string seperator = "", string splitter = "", bool errors = true)
         {
             string[] InputSplit = Input.Split(splitter);
 
@@ -762,7 +820,7 @@ namespace Typography
                 InputSplit = Input.ToArray().ToStringArray();
 
             string returnValue = "";
-            ProgressBar bar = new ProgressBar(ProgressBarName, InputSplit.Length);
+            ProgressBar bar = new ProgressBar(Name, InputSplit.Length);
 
             for (int i = 0; i < InputSplit.Length; i++)
             {
@@ -796,7 +854,7 @@ namespace Typography
                         returnValue += $"{seperator}{InputSplit[i]}";
 
                     if (errors)
-                        Program.Error($"{ProgressBarName}: Cannot convert key {InputSplit[i]}");
+                        Program.Error($"{Name}: Cannot convert key {InputSplit[i]}");
                 }
             }
 
@@ -806,10 +864,9 @@ namespace Typography
             return returnValue.Substring(seperator.Length);
         }
 
-        public static string Decode(string Input, Dictionary<string, string> keys, string ProgressBarName,
-            string splitter = "", bool errors = true)
+        public static string Decode(string Input, Dictionary<string, string> keys, string Name, string splitter = "", bool errors = true)
         {
-            return Encode(Input, keys.FlipDict(), ProgressBarName, "", splitter, errors);
+            return Encode(Input, keys.FlipDict(), Name, "", splitter, errors);
         }
 
         public static string Repeat(string Input, int amount, bool encode)

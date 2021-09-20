@@ -10,14 +10,12 @@ namespace Typography
         {
             if (array.Length == 0)
             {
-                Program.Error("Not any params (0)");
                 return defaultValue;
             }
 
             if (array.Length <= index)
             {
-                Program.Error($"{array[0]} does not have enough params ({array.Length})");
-                return array[0];
+                return defaultValue;
             }
 
             return array[index];
@@ -49,6 +47,28 @@ namespace Typography
             }
 
             return returnValue;
+        }
+
+        public static string ToRealString(this string[] input, char seperator)
+        {
+            string returnValue = "";
+            foreach (var item in input)
+            {
+                returnValue += seperator + item;
+            }
+
+            return returnValue[1..];
+        }
+
+        public static string ToRealString(this List<string> input, char seperator)
+        {
+            string returnValue = "";
+            foreach (var item in input)
+            {
+                returnValue += seperator + item;
+            }
+
+            return returnValue[1..];
         }
 
         public static Dictionary<TValue, TKey> FlipDict<TKey, TValue>(this Dictionary<TKey, TValue> input)
@@ -92,5 +112,38 @@ namespace Typography
 
             return false;
         }
+    }
+
+    public static class AlphabetAndWords
+    {
+        public static List<char> alphabet = new()
+        {
+            'a',
+            'b',
+            'c',
+            'd',
+            'e',
+            'f',
+            'g',
+            'h',
+            'i',
+            'j',
+            'k',
+            'l',
+            'm',
+            'n',
+            'o',
+            'p',
+            'q',
+            'r',
+            's',
+            't',
+            'u',
+            'v',
+            'w',
+            'x',
+            'y',
+            'z',
+        };
     }
 }
