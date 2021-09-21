@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Forms;
@@ -12,6 +13,8 @@ namespace Typography
     {
         public static RunMode runMode;
         public static int ProgressChunks = 10;
+        public static Stopwatch uptime = new();
+        public static string oldInput = "";
 
         public enum RunMode
         {
@@ -23,6 +26,7 @@ namespace Typography
         [STAThread]
         public static void Main(string[] args)
         {
+            uptime.Start();
             runMode = args.Length > 0 ? RunMode.cmdMode : RunMode.exeFile;
 
             if (runMode == RunMode.exeFile)
@@ -55,7 +59,7 @@ namespace Typography
 
             initialValue = methodCode.CheckForVars(initialValue);
             MakeMethods(Input);
-            Console.WriteLine(methodCode.methods["main"].compute(initialValue));
+            Console.WriteLine($"\n---\n{methodCode.methods["main"].compute(initialValue)}");
         }
 
         public static void MakeMethods(string Input)
@@ -97,26 +101,6 @@ namespace Typography
             return returnVal.Substring(1);
         }
 
-        public static bool StringIsTrue(string[] Params, int index, bool defaultValue)
-        {
-            if (Params.Length <= index)
-                return defaultValue;
-
-            if (Params[index].Length == 0)
-                return defaultValue;
-
-            if (Params[index].ToLower()[0] == 'e')
-                return true;
-
-            if (Params[index].ToLower() == "true")
-                return true;
-
-            if (Params[index].ToLower()[0] == 'y')
-                return true;
-
-            return false;
-        }
-
         public static void Error(string message)
         {
             Console.ForegroundColor = ConsoleColor.Red;
@@ -124,7 +108,7 @@ namespace Typography
             Console.ResetColor();
         }
 
-        public static string Error(string message, string inputReturn)
+        public static T Error<T>(string message, T inputReturn)
         {
             Error(message);
             return inputReturn;

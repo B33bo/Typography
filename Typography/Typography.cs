@@ -106,6 +106,10 @@ namespace Typography
                 case TypographyType.userinput:
                     return Console.ReadLine();
 
+                case TypographyType.inputIntoVar:
+                    Program.oldInput = Console.ReadLine();
+                    return input;
+
                 case TypographyType.repeat:
                     if (!int.TryParse(Params.safeGet(1), out int res))
                         return Program.Error($"'{Params.safeGet(1)}' is not a string.", input);
@@ -250,10 +254,12 @@ namespace Typography
                     return owoify.Encode(input);
 
                 case TypographyType.set:
+                    string value = Params.Length <= 2 ? input : Params[2];
+
                     if (methodCode.variables.ContainsKey(Params.safeGet(1)))
-                        methodCode.variables[Params.safeGet(1)] = input;
+                        methodCode.variables[Params.safeGet(1)] = value;
                     else
-                        methodCode.variables.Add(Params.safeGet(1), input);
+                        methodCode.variables.Add(Params.safeGet(1), value);
                     return input;
 
                 case TypographyType.change:
@@ -378,10 +384,50 @@ namespace Typography
                     return toEncode ? NumericAlphabet.Encode(input) : NumericAlphabet.Decode(input);
 
                 case TypographyType.braille:
-                    return toEncode ? TextToEncode.Encode(input, TextToEncode.braille, "Braille (Encode)"):
+                    return toEncode ? TextToEncode.Encode(input, TextToEncode.braille, "Braille (Encode)") :
                         Braille.Decode(input);
-                default:
-                    break;
+
+                case TypographyType.math:
+                    if (!double.TryParse(input, out double mathsResult))
+                        return Program.Error($"maths : {input} (input) is not a number", input);
+
+                    if (Params.Length <= 2)
+                        return MathsSolve.Value(mathsResult, Params.safeGet(1)).ToString();
+
+                    if (!double.TryParse("0" + Params.safeGet(2), out double mathsResultNum2))
+                        return Program.Error($"maths : {Params.safeGet(2)} (param) is not a number", input);
+
+                    return MathsSolve.Value(mathsResult, Params.safeGet(1), mathsResultNum2).ToString();
+
+                case TypographyType.badspelling:
+                    return BadSpelling.Encode(input);
+
+                case TypographyType.print:
+                    ConsoleColor consoleColorText = ConsoleColor.White;
+                    if (Params.Length > 1)
+                    {
+                        if (!Enum.TryParse(Params[1], out consoleColorText))
+                            Program.Error($"{Params[1]} is not a console color. ");
+                    }
+
+                    Console.ForegroundColor = consoleColorText;
+
+                    Console.Write(Params.Length >= 3 ? Params[2] : input);
+                    Console.ResetColor();
+
+                    return input;
+
+                case TypographyType.background:
+                    if (!Enum.TryParse(Params.safeGet(1), out ConsoleColor consoleColorBack))
+                        Program.Error($"{Params.safeGet(1)} is not a console color. ");
+
+                    Console.BackgroundColor = consoleColorBack;
+
+                    return input;
+
+                case TypographyType.showtutorial:
+                    Console.WriteLine(Program.AllTypes("\n"));
+                    return input;
             }
 
             Program.Error($"{type} is not yet implemented");
@@ -432,6 +478,8 @@ namespace Typography
                     return "black bubble text       blackbubble~encode/decode";
                 case TypographyType.userinput:
                     return "user input              input";
+                case TypographyType.inputIntoVar:
+                    return "input into var %input%  inputIntoVar";
                 case TypographyType.repeat:
                     return "repeat                  repeat~X~encode/decode";
                 case TypographyType.oldSchool:
@@ -512,6 +560,16 @@ namespace Typography
                     return "Numeric (A=1, B=2)      numeric~encode/decode";
                 case TypographyType.braille:
                     return "Braille                 braille~encode/decode";
+                case TypographyType.math:
+                    return "Maths                   math~operator~number";
+                case TypographyType.badspelling:
+                    return "Bad Speling             badspelling";
+                case TypographyType.print:
+                    return "Print                   print~colour~message";
+                case TypographyType.background:
+                    return "Set Background          background~colour";
+                case TypographyType.showtutorial:
+                    return "Show tutorial           showtutorial";
                 default:
                     return input.ToString();
             }
@@ -563,6 +621,8 @@ namespace Typography
                     return TypographyType.blackbubble;
                 case "input":
                     return TypographyType.userinput;
+                case "inputintovar":
+                    return TypographyType.inputIntoVar;
                 case "repeat":
                     return TypographyType.repeat;
                 case "oldschool":
@@ -644,6 +704,17 @@ namespace Typography
                     return TypographyType.numericAlphabet;
                 case "braille":
                     return TypographyType.braille;
+                case "math":
+                case "maths":
+                    return TypographyType.math;
+                case "badspelling":
+                    return TypographyType.badspelling;
+                case "print":
+                    return TypographyType.print;
+                case "background":
+                    return TypographyType.background;
+                case "showtutorial":
+                    return TypographyType.showtutorial;
                 case "":
                 case " ":
                     return TypographyType.None;
@@ -674,6 +745,7 @@ namespace Typography
         bubble,
         blackbubble,
         userinput,
+        inputIntoVar,
         repeat,
         oldSchool,
         write,
@@ -714,5 +786,10 @@ namespace Typography
         british,
         numericAlphabet,
         braille,
+        math,
+        badspelling,
+        print,
+        background,
+        showtutorial,
     }
 }

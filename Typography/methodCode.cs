@@ -14,12 +14,41 @@ namespace Typography
             { "tstvar", "testing123" },
             { "percent", "%" },
             { "semicolon", ";" },
+            { "colon", ":" },
             { "tilda", "~" },
             { "runmode", "Unknown"},
             { "time", "Unknown" },
             { "true", "True" },
             { "false", "False" },
             { "empty", string.Empty },
+            { "pi", Math.PI.ToString() },
+            { "e", Math.E.ToString() },
+            { "tau", Math.Tau.ToString() },
+            { "nan", double.NaN.ToString() },
+            { "inf", double.PositiveInfinity.ToString() },
+            { "-inf", double.NegativeInfinity.ToString() },
+            { "clipboard", "" },
+            { "uptime", "" },
+            { "input", "" },
+
+            { "black", "Black" },
+            { "darkblue", "DarkBlue" },
+            { "darkgreen", "DarkGreen" },
+            { "darkcyan", "DarkCyan" },
+            { "darkred", "DarkRed" },
+            { "darkmagenta", "DarkRed" },
+            { "darkyellow", "DarkYellow" },
+            { "gray", "Gray" },
+            { "grey", "Gray" },
+            { "darkgray", "DarkGray" },
+            { "darkgrey", "DarkGray" },
+            { "blue", "Blue" },
+            { "green", "Green" },
+            { "cyan", "Cyan" },
+            { "red", "Red" },
+            { "magenta", "Magenta" },
+            { "yellow", "Yellow" },
+            { "white", "White" },
         };
 
         public string[] commands;
@@ -52,6 +81,9 @@ namespace Typography
         {
             variables["runmode"] = Program.runMode.ToString();
             variables["time"] = DateTime.Now.ToString();
+            variables["clipboard"] = System.Windows.Forms.Clipboard.GetText();
+            variables["uptime"] = Program.uptime.ElapsedMilliseconds.ToString();
+            variables["input"] = Program.oldInput;
         }
 
         public static string CheckForVars(string input)
