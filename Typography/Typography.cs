@@ -104,10 +104,10 @@ namespace Typography
                         TextToEncode.Decode(input, TextToEncode.blackBubbleText, "Black bubble (decode)");
 
                 case TypographyType.userinput:
-                    return Console.ReadLine();
+                    return methodCode.CheckForVars(Console.ReadLine());
 
                 case TypographyType.inputIntoVar:
-                    Program.oldInput = Console.ReadLine();
+                    Program.oldInput = methodCode.CheckForVars(Console.ReadLine());
                     return input;
 
                 case TypographyType.repeat:
@@ -257,9 +257,9 @@ namespace Typography
                     string value = Params.Length <= 2 ? input : Params[2];
 
                     if (methodCode.variables.ContainsKey(Params.safeGet(1)))
-                        methodCode.variables[Params.safeGet(1)] = value;
+                        methodCode.variables[Params.safeGet(1).ToLower()] = value;
                     else
-                        methodCode.variables.Add(Params.safeGet(1), value);
+                        methodCode.variables.Add(Params.safeGet(1).ToLower(), value);
                     return input;
 
                 case TypographyType.change:
@@ -428,6 +428,15 @@ namespace Typography
                 case TypographyType.showtutorial:
                     Console.WriteLine(Program.AllTypes("\n"));
                     return input;
+                case TypographyType.debug:
+
+                    if (Params.Length <= 1)
+                    {
+                        Program.DebugMode = !Program.DebugMode;
+                        return input;
+                    }
+                    Program.DebugMode = Params[1].isTrue();
+                    return input;
             }
 
             Program.Error($"{type} is not yet implemented");
@@ -438,6 +447,8 @@ namespace Typography
         {
             switch (input)
             {
+                case TypographyType.None:
+                    return "None                    none";
                 case TypographyType.Normal:
                     return "Normal                  normal";
                 case TypographyType.Reverse:
@@ -570,6 +581,8 @@ namespace Typography
                     return "Set Background          background~colour";
                 case TypographyType.showtutorial:
                     return "Show tutorial           showtutorial";
+                case TypographyType.debug:
+                    return "Debug mode              debug~on/off";
                 default:
                     return input.ToString();
             }
@@ -581,6 +594,8 @@ namespace Typography
             {
                 default:
                     return TypographyType.error;
+                case "none":
+                    return TypographyType.None;
                 case "normal":
                     return TypographyType.Normal;
                 case "reverse":
@@ -715,6 +730,8 @@ namespace Typography
                     return TypographyType.background;
                 case "showtutorial":
                     return TypographyType.showtutorial;
+                case "debug":
+                    return TypographyType.debug;
                 case "":
                 case " ":
                     return TypographyType.None;
@@ -791,5 +808,6 @@ namespace Typography
         print,
         background,
         showtutorial,
+        debug,
     }
 }

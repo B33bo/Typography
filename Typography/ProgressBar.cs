@@ -65,6 +65,9 @@ namespace Typography
 
         public void Print()
         {
+            if (Program.runMode != Program.RunMode.exeFile)
+                return;
+
             Console.CursorLeft = 0;
             Console.Write(ToString());
         }

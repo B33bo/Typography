@@ -110,6 +110,9 @@ namespace Typography
             if (str.ToLower()[0] == 'y')
                 return true;
 
+            if (str.ToLower() == "on")
+                return true;
+
             if (double.TryParse(str, out double result))
                 if (result == 1)
                     return true;

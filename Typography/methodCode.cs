@@ -30,6 +30,7 @@ namespace Typography
             { "clipboard", "" },
             { "uptime", "" },
             { "input", "" },
+            { "debug", "" },
 
             { "black", "Black" },
             { "darkblue", "DarkBlue" },
@@ -71,6 +72,14 @@ namespace Typography
                 string[] Params = commands[i].Split('~');
                 string command = Params[0];
 
+                if (Program.DebugMode)
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine($"debug:: {Params.ToRealString('~')} ({returnValue})");
+                    Console.ResetColor();
+                    Console.ReadLine();
+                }
+
                 returnValue = Typography.DoTypographyType(command.ParseAsType(), returnValue, Params);
             }
 
@@ -84,6 +93,7 @@ namespace Typography
             variables["clipboard"] = System.Windows.Forms.Clipboard.GetText();
             variables["uptime"] = Program.uptime.ElapsedMilliseconds.ToString();
             variables["input"] = Program.oldInput;
+            variables["debug"] = Program.DebugMode.ToString();
         }
 
         public static string CheckForVars(string input)

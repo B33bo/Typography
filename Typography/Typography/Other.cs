@@ -75,6 +75,10 @@ namespace Typography
             for (int i = 0; i < Input.Length; i++)
             {
                 bar.Increase();
+
+                if (Input.EndsWith(" "))
+                    continue;
+
                 if (i == 0)
                     ListFormatreturnVal.Add(Input[0].ToString());
                 else
@@ -99,7 +103,7 @@ namespace Typography
         {
             new ProgressBar("Replace", 1, 1).Print();
 
-            if (X.Length == 0 || Y.Length == 0)
+            if (X.Length == 0)
             {
                 Program.Error($"Cannot replace word with something of zero length");
                 return Input;
@@ -401,7 +405,15 @@ namespace Typography
                     returnValue += " :3";
             }
 
-            returnValue = returnValue.ToLower().Replace("ove", "uv").Replace("r", "w");
+            string[] splitByWords = returnValue.Split(' ');
+
+            for (int i = 0; i < splitByWords.Length; i++)
+            {
+                if (splitByWords[i].StartsWith("l"))
+                    splitByWords[i] = "w" + splitByWords[i][1..];
+            }
+
+            returnValue = splitByWords.ToRealString(' ').ToLower().Replace("ove", "uv").Replace("r", "w");
 
             return returnValue;
         }

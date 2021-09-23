@@ -15,6 +15,7 @@ namespace Typography
         public static int ProgressChunks = 10;
         public static Stopwatch uptime = new();
         public static string oldInput = "";
+        public static bool DebugMode = false;
 
         public enum RunMode
         {
