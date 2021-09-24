@@ -30,6 +30,7 @@ namespace Typography
             uptime.Start();
             runMode = args.Length > 0 ? RunMode.cmdMode : RunMode.exeFile;
 
+
             if (runMode == RunMode.exeFile)
             {
                 Console.WriteLine("Please select some processes:\n");

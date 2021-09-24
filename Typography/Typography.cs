@@ -437,6 +437,14 @@ namespace Typography
                     }
                     Program.DebugMode = Params[1].isTrue();
                     return input;
+                case TypographyType.wordShift:
+                    if (!int.TryParse(Params.safeGet(1), out int wordShiftAmount))
+                        return Program.Error($"Wordshift: {wordShiftAmount} is not an int", input);
+
+                    return WordShift.ShiftWords(input, wordShiftAmount);
+
+                case TypographyType.discordtime:
+                    return ToDiscordTimestamp.Encode(input, Params.safeGet(1, "f"));
             }
 
             Program.Error($"{type} is not yet implemented");
@@ -583,6 +591,10 @@ namespace Typography
                     return "Show tutorial           showtutorial";
                 case TypographyType.debug:
                     return "Debug mode              debug~on/off";
+                case TypographyType.wordShift:
+                    return "Word shift              wordshift~amount";
+                case TypographyType.discordtime:
+                    return "Discord Time            discordtime~encoding";
                 default:
                     return input.ToString();
             }
@@ -732,6 +744,10 @@ namespace Typography
                     return TypographyType.showtutorial;
                 case "debug":
                     return TypographyType.debug;
+                case "wordshift":
+                    return TypographyType.wordShift;
+                case "discordtime":
+                    return TypographyType.discordtime;
                 case "":
                 case " ":
                     return TypographyType.None;
@@ -809,5 +825,7 @@ namespace Typography
         background,
         showtutorial,
         debug,
+        wordShift,
+        discordtime,
     }
 }

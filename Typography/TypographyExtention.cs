@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Text.RegularExpressions;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -119,38 +121,25 @@ namespace Typography
 
             return false;
         }
-    }
 
-    public static class AlphabetAndWords
-    {
-        public static List<char> alphabet = new()
+        public static int IndexOf<T>(this T[] input, T item)
         {
-            'a',
-            'b',
-            'c',
-            'd',
-            'e',
-            'f',
-            'g',
-            'h',
-            'i',
-            'j',
-            'k',
-            'l',
-            'm',
-            'n',
-            'o',
-            'p',
-            'q',
-            'r',
-            's',
-            't',
-            'u',
-            'v',
-            'w',
-            'x',
-            'y',
-            'z',
-        };
+            for (int i = 0; i < input.Length; i++)
+            {
+                if (EqualityComparer<T>.Default.Equals(input[i], item))
+                    return i;
+            }
+
+            return -1;
+        }
+
+        public static string GetPathFromPartial(string RelativeLoc)
+        {
+            List<string> currentDir = System.Reflection.Assembly.GetEntryAssembly().Location.Split(@"\").ToList();
+
+            currentDir.RemoveAt(currentDir.Count - 1);
+            string path = currentDir.ToRealString('\\');
+            return path + @"\" + RelativeLoc;
+        }
     }
 }

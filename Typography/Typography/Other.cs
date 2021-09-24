@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
@@ -68,7 +69,7 @@ namespace Typography
     {
         public static string sentencePyramid(string Input)
         {
-            ProgressBar bar = new ProgressBar("Sentence Pyramid", (Input.Length * 2) - 2);
+            ProgressBar bar = new ProgressBar("Sentence Pyramid", (Input.Length * 3) - 2);
             List<string> ListFormatreturnVal = new List<string>();
             string returnVal = "";
 
@@ -76,16 +77,22 @@ namespace Typography
             {
                 bar.Increase();
 
-                if (Input.EndsWith(" "))
-                    continue;
-
                 if (i == 0)
                     ListFormatreturnVal.Add(Input[0].ToString());
                 else
-                    ListFormatreturnVal.Add(ListFormatreturnVal[i - 1] + Input[i]);
-
-                returnVal += ListFormatreturnVal[i] + "\n";
+                    ListFormatreturnVal.Add(ListFormatreturnVal[^1] + Input[i]);
             }
+
+            for (int i = 0; i < ListFormatreturnVal.Count; i++)
+            {
+                if (ListFormatreturnVal[i].EndsWith(" "))
+                {
+                    ListFormatreturnVal.RemoveAt(i);
+                    i = 0;
+                }
+            }
+
+            returnVal = ListFormatreturnVal.ToRealString('\n') + "\n";
 
             for (int i = ListFormatreturnVal.Count - 2; i >= 0; i--)
             {
@@ -378,7 +385,7 @@ namespace Typography
             'e',
             'i',
             'o',
-            'u'
+            'u',
         };
 
         public static string Encode(string input)
@@ -523,6 +530,64 @@ namespace Typography
             }
 
             return returnValue;
+        }
+    }
+
+    public static class ToDiscordTimestamp
+    {
+        public static string Encode(string input, string formatType)
+        {
+            DateTime date;
+
+            if (input.ToLower() == "now")
+            {
+                date = DateTime.Now;
+            }
+            else
+            {
+                if (!DateTime.TryParse(input, out date))
+                    return Program.Error($"{input} is not a valid date!!", input);
+            }
+
+            long unixTime = ((DateTimeOffset)date).ToUnixTimeSeconds();
+
+            return $"<t:{unixTime}:{GetFormatType(formatType)}>";
+        }
+
+        public static string GetFormatType(string input)
+        {
+            string cleanInput = Regex.Replace(input.ToLower(), @"[^a-z]+", "");
+
+            switch (cleanInput)
+            {
+                default:
+                    return input;
+                case "mdy":
+                case "monthdateyear":
+                case "ddmmyy":
+                    return "d";
+                case "mdyt":
+                case "monthdayyearttime":
+                    return "f";
+                case "t":
+                case "time":
+                    return "t";
+                case "monthdayyear":
+                case "mwdy":
+                    return "T";
+                case "mddy":
+                case "monthdaydayyear":
+                    return "D";
+                case "weekdaymonthdayyeartime":
+                case "wdmdyt":
+                    return "F";
+                case "timesince":
+                case "ts":
+                    return "R";
+                case "hms":
+                case "hoursminutesseconds":
+                    return "T";
+            }
         }
     }
 }
