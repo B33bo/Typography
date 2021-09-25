@@ -6,7 +6,7 @@ namespace Typography
     {
         public static string Encode(string Input)
         {
-            ProgressBar bar = new ProgressBar("Big letters to dict", Input.Length);
+            ProgressBar bar = new("Big letters to dict", Input.Length);
 
             string returnValue = "";
             string[] lines = Input.Split('\n');

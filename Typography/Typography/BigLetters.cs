@@ -10,7 +10,7 @@ namespace Typography
     public static class BigLetters
     {
         //Keep this collapsed. Trust me
-        public static Dictionary<string, string> letters = new Dictionary<string, string>()
+        public static Dictionary<string, string> letters = new()
         {
             //A curious one, I see!
             {"A",
@@ -598,7 +598,7 @@ namespace Typography
 
         public static string Encode(string Input)
         {
-            ProgressBar bar = new ProgressBar("Big Letters", Input.Length);
+            ProgressBar bar = new("Big Letters", Input.Length);
             string returnValue = "";
             for (int i = 0; i < Input.Length; i++)
             {

@@ -9,7 +9,7 @@ namespace Typography
     //IDK HOW TO SPELL
     public static class Caesar
     {
-        public static List<char> alphabet = new List<char>()
+        public static List<char> alphabet = new()
         {
             'a',
             'b',
@@ -41,7 +41,7 @@ namespace Typography
 
         public static string Encode(string input, int shift)
         {
-            ProgressBar bar = new ProgressBar("Caesar Cipher", input.Length);
+            ProgressBar bar = new("Caesar Cipher", input.Length);
 
             string returnValue = "";
 

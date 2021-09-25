@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace Typography
 {
-    public class methodCode
+    public class MethodCode
     {
-        public static Dictionary<string, methodCode> methods = new Dictionary<string, methodCode>();
+        public static Dictionary<string, MethodCode> methods = new();
 
-        public static Dictionary<string, string> variables = new Dictionary<string, string>()
+        public static Dictionary<string, string> variables = new()
         {
             { @"\n", "\n" },
             { @"\r", "\r"},
@@ -71,13 +71,13 @@ namespace Typography
         public string[] commands;
         public string methodName;
 
-        public methodCode(string name, string code)
+        public MethodCode(string name, string code)
         {
             methodName = name;
             commands = code.Split(';');
         }
 
-        public string compute(string inputVar)
+        public string Compute(string inputVar)
         {
             string returnValue = inputVar;
             for (int i = 0; i < commands.Length; i++)

@@ -88,7 +88,7 @@ namespace Typography
                     return input == number ? 1 : 0;
                 case "?":
                 case "random":
-                    Random random = new Random();
+                    Random random = new();
                     return random.NextDouble() * (input - number) + number;
             }
         }

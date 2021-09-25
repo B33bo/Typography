@@ -8,7 +8,7 @@ namespace Typography
 {
     public class BadSpelling
     {
-        public static Dictionary<string, string> Mistakes = new Dictionary<string, string>()
+        public static Dictionary<string, string> Mistakes = new()
         {
             {"ba", "ab"},
             {"ve", "e"},
@@ -38,7 +38,7 @@ namespace Typography
                 return Input;
 
             int spaceKeys = Input.ToCharArray().Count(c => c == ' ');
-            ProgressBar bar = new ProgressBar("Speling mistake (Encode)", spaceKeys + Input.Length + Mistakes.Count);
+            ProgressBar bar = new("Speling mistake (Encode)", spaceKeys + Input.Length + Mistakes.Count);
 
             string returnValue = "";
 
@@ -69,7 +69,7 @@ namespace Typography
                     continue;
 
                 if (splitByWords[i].EndsWith("s"))
-                    splitByWords[i] = splitByWords[i].Substring(0, splitByWords[i].Length - 1) + "z";
+                    splitByWords[i] = splitByWords[i][0..^1] + "z";
             }
 
             string[] keys = Mistakes.Keys.OfType<string>().ToArray();

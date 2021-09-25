@@ -8,13 +8,12 @@ namespace Typography
     {
         public static string FlipCondition(string Input)
         {
-            ProgressBar bar = new ProgressBar("Flip Condition", 1);
+            ProgressBar bar = new("Flip Condition", 1);
 
             Input = Input.ToLower();
-            Condition input;
 
-            if (!Enum.TryParse(Input, out input))
-                input = getConditionFromOperator(Input);
+            if (!Enum.TryParse(Input, out Condition input))
+                input = GetConditionFromOperator(Input);
 
             int ID_of_Input = (int)input;
             bar.Increase();
@@ -25,7 +24,7 @@ namespace Typography
                 return ((Condition)ID_of_Input - 1).ToString();
         }
 
-        public static Condition getConditionFromOperator(string Operator)
+        public static Condition GetConditionFromOperator(string Operator)
         {
             Operator = Operator.ToLower();
             var res = getAsCsharpOperator.FlipDict();
@@ -65,7 +64,7 @@ namespace Typography
             xnor,
         }
 
-        public static Dictionary<Condition, string> getAsCsharpOperator = new Dictionary<Condition, string>()
+        public static Dictionary<Condition, string> getAsCsharpOperator = new()
         {
             {Condition.unknown, "error"},
             {Condition.unknown2, "error2"},

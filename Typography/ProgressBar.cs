@@ -11,7 +11,7 @@ namespace Typography
 
         public int Value { get; set; }
         public int MaxValue { get; private set; }
-        public Stopwatch stopwatch { get; private set; } = new Stopwatch();
+        public Stopwatch Stopwatch { get; private set; } = new Stopwatch();
 
         public string ProcessName = "Unnamed";
 
@@ -28,7 +28,7 @@ namespace Typography
 
         private void Start()
         {
-            stopwatch.Start();
+            Stopwatch.Start();
         }
 
         public void Increase(int amount = 1)
@@ -60,7 +60,7 @@ namespace Typography
                 ProgressValue += i > ChunksToFill ? emptySquare : filledSquare;
             }
 
-            return $"[{ProgressValue}] {ProcessName} time = {stopwatch.ElapsedMilliseconds} % = {Percentage}";
+            return $"[{ProgressValue}] {ProcessName} time = {Stopwatch.ElapsedMilliseconds} % = {Percentage}";
         }
 
         public void Print()

@@ -11,7 +11,7 @@ namespace Typography
     {
         public static string ShiftWords(string Input, int Shift)
         {
-            ProgressBar bar = new ProgressBar("Word shift", Input.Length);
+            ProgressBar bar = new("Word shift", Input.Length);
 
             Input = Input.ToLower();
             Input = Regex.Replace(Input, @"[^a-zA-Z ]+", "");

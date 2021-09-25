@@ -7,7 +7,7 @@ namespace Typography
 {
     public static class TextToEncode
     {
-        public static Dictionary<string, string> blackBubbleText = new Dictionary<string, string>()
+        public static Dictionary<string, string> blackBubbleText = new()
         {
             {"a", "🅐"},
             {"b", "🅑"},
@@ -47,7 +47,7 @@ namespace Typography
             {"0", "⓿"},
         };
 
-        public static Dictionary<string, string> BubbleText = new Dictionary<string, string>()
+        public static Dictionary<string, string> BubbleText = new()
         {
             {"A", "Ⓐ"},
             {"a", "ⓐ"},
@@ -113,7 +113,7 @@ namespace Typography
             {"0", "⓪"},
         };
 
-        public static Dictionary<string, string> oldSchool = new Dictionary<string, string>()
+        public static Dictionary<string, string> oldSchool = new()
         {
             {"A", "𝔄"},
             {"a", "𝔞"},
@@ -170,7 +170,7 @@ namespace Typography
             {"3", "ℨ"},
         };
 
-        public static Dictionary<string, string> doubleStruck = new Dictionary<string, string>()
+        public static Dictionary<string, string> doubleStruck = new()
         {
             {"A","𝔸"},
             {"a","𝕒"},
@@ -236,7 +236,7 @@ namespace Typography
             {"0","𝟘"},
         };
 
-        public static Dictionary<string, string> discordEmoji = new Dictionary<string, string>()
+        public static Dictionary<string, string> discordEmoji = new()
         {
             {"a", ":regional_indicator_a:"},
             {"b", ":regional_indicator_b:"},
@@ -301,7 +301,7 @@ namespace Typography
             {"}", ":leftwards_arrow_with_hook:"},
         };
 
-        public static Dictionary<string, string> morseCode = new Dictionary<string, string>()
+        public static Dictionary<string, string> morseCode = new()
         {
             {"a", ".-"},
             {"b", "-..."},
@@ -390,7 +390,7 @@ namespace Typography
             {"ż", "--..-"},
         };
 
-        public static Dictionary<string, string> bold = new Dictionary<string, string>()
+        public static Dictionary<string, string> bold = new()
         {
             {"A", "𝐀"},
             {"a", "𝐚"},
@@ -456,7 +456,7 @@ namespace Typography
             {"0", "𝟎"},
         };
 
-        public static Dictionary<string, string> italics = new Dictionary<string, string>()
+        public static Dictionary<string, string> italics = new()
         {
             {"A", "𝐴"},
             {"a", "𝑎"},
@@ -512,7 +512,7 @@ namespace Typography
             {"z", "𝑧"},
         };
 
-        public static Dictionary<string, string> boldItalics = new Dictionary<string, string>()
+        public static Dictionary<string, string> boldItalics = new()
         {
             {"A", "𝑨"},
             {"a", "𝒂"},
@@ -568,7 +568,7 @@ namespace Typography
             {"z", "𝒛"},
         };
 
-        public static Dictionary<string, string> smallcaps = new Dictionary<string, string>()
+        public static Dictionary<string, string> smallcaps = new()
         {   
             {"a", "ᴀ"},
             {"b", "ʙ"},
@@ -598,7 +598,7 @@ namespace Typography
             {"z", "ᴢ"},
         };
 
-        public static Dictionary<string, string> textToHtml = new Dictionary<string, string>()
+        public static Dictionary<string, string> textToHtml = new()
         {
             {"\"", "&quot;"},
             {"'", "&apos;"},
@@ -703,7 +703,7 @@ namespace Typography
             {"ÿ", "&yuml;"},
         };
 
-        public static Dictionary<string, string> leetSpeak = new Dictionary<string, string>()
+        public static Dictionary<string, string> leetSpeak = new()
         {
             {"a", "4"},
             {"b", "8"},
@@ -715,7 +715,7 @@ namespace Typography
             {"z", "2"},
         };
 
-        public static Dictionary<string, string> StandardGalacticAlphabet = new Dictionary<string, string>()
+        public static Dictionary<string, string> StandardGalacticAlphabet = new()
         {
             {"a", "ᔑ"},
             {"b", "ʖ"},
@@ -745,7 +745,7 @@ namespace Typography
             {"z", "⨅"},
         };
 
-        public static Dictionary<string, string> braille = new Dictionary<string, string>()
+        public static Dictionary<string, string> braille = new()
         {
             {"a", "⠁"},
             {"b", "⠃"},
@@ -820,7 +820,7 @@ namespace Typography
                 InputSplit = Input.ToArray().ToStringArray();
 
             string returnValue = "";
-            ProgressBar bar = new ProgressBar(Name, InputSplit.Length);
+            ProgressBar bar = new(Name, InputSplit.Length);
 
             for (int i = 0; i < InputSplit.Length; i++)
             {
@@ -861,7 +861,7 @@ namespace Typography
             if (returnValue.Length == 0)
                 return returnValue;
 
-            return returnValue.Substring(seperator.Length);
+            return returnValue[seperator.Length..];
         }
 
         public static string Decode(string Input, Dictionary<string, string> keys, string Name, string splitter = "", bool errors = true)
@@ -876,7 +876,7 @@ namespace Typography
                 new ProgressBar("Repeat Backwards", 1, 1).Print();
                 return Input.Substring(0, Input.Length / amount);
             }
-            ProgressBar bar = new ProgressBar("Repeat", amount);
+            ProgressBar bar = new("Repeat", amount);
 
             string returnValue = "";
 

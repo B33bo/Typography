@@ -7,7 +7,7 @@ namespace Typography
 {
     public static class Upsidedown
     {
-        public static Dictionary<string, string> alphabet = new Dictionary<string, string>()
+        public static Dictionary<string, string> alphabet = new()
         {
             {"A", "∀"},
             {"∀", "A"},
@@ -92,7 +92,7 @@ namespace Typography
 
         public static string Upsideown(string input)
         {
-            ProgressBar bar = new ProgressBar("Upsidedown", input.Length);
+            ProgressBar bar = new("Upsidedown", input.Length);
             string returnValue = "";
 
             for (int i = 0; i < input.Length; i++)

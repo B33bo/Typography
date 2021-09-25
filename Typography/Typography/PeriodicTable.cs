@@ -7,7 +7,7 @@ namespace Typography
 {
     public static class PeriodicTable
     {
-        public static Dictionary<string, string> keys = new Dictionary<string, string>()
+        public static Dictionary<string, string> keys = new()
         {
 			{"h", "hydrogen"},
 			{"li", "lithium"},
@@ -131,7 +131,7 @@ namespace Typography
 
         public static string Encode(string Input)
         {
-			ProgressBar bar = new ProgressBar("Periodic table (Encode)", Input.Length);
+			ProgressBar bar = new("Periodic table (Encode)", Input.Length);
             string returnValue = "";
             for (int i = 0; i < Input.Length; i++)
             {
@@ -168,7 +168,7 @@ namespace Typography
 			string[] inputElements = Input.ToLower().Split(' ');
 			string returnValue = "";
 
-			ProgressBar bar = new ProgressBar("Periodic table (Decode)", inputElements.Length);
+			ProgressBar bar = new("Periodic table (Decode)", inputElements.Length);
             foreach (string item in inputElements)
             {
 				if (flippedElements.ContainsKey(item))

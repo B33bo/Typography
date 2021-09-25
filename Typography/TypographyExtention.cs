@@ -8,7 +8,7 @@ namespace Typography
 {
     public static class TypographyExtention
     {
-        public static T safeGet<T>(this T[] array, int index, T defaultValue)
+        public static T SafeGet<T>(this T[] array, int index, T defaultValue)
         {
             if (array.Length == 0)
             {
@@ -23,18 +23,18 @@ namespace Typography
             return array[index];
         }
 
-        public static T safeGet<T>(this T[] array, int index)
+        public static T SafeGet<T>(this T[] array, int index)
         {
             if (array.Length == 0)
             {
                 Program.Error("Not any params (0)");
-                return default(T);
+                return default;
             }
 
             if (array.Length <= index)
             {
                 Program.Error($"{array[0]} does not have enough params ({array.Length})");
-                return default(T);
+                return default;
             }
 
             return array[index];
@@ -78,7 +78,7 @@ namespace Typography
             List<TKey> keys = input.Keys.OfType<TKey>().ToList();
             List<TValue> values = input.Values.OfType<TValue>().ToList();
 
-            Dictionary<TValue, TKey> returnValue = new Dictionary<TValue, TKey>();
+            Dictionary<TValue, TKey> returnValue = new();
 
             for (int i = 0; i < keys.Count; i++)
             {
@@ -101,7 +101,7 @@ namespace Typography
             return Char.ToUpper(str);
         }
 
-        public static bool isTrue(this string str)
+        public static bool IsTrue(this string str)
         {
             if (str.ToLower()[0] == 'e')
                 return true;

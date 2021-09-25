@@ -129,9 +129,12 @@ namespace Typography
 			{ "yoruba", "yo" },
 			{ "zulu", "zu" },
 		};
-		public static string Translate(string word, string fromLanguage, string toLanguage, bool progressbar = true)
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0057:Use range operator", Justification = "<Pending>")]
+        public static string Translate(string word, string fromLanguage, string toLanguage, bool progressbar = true)
 		{
 			ProgressBar bar = null;
+
 			if (progressbar)
 				bar = new ProgressBar($"Translate from {fromLanguage} to {toLanguage}", 4);
 
@@ -147,7 +150,9 @@ namespace Typography
 			if (progressbar)
 				bar.Increase();
 
-			var url = $"https://translate.googleapis.com/translate_a/single?client=gtx&sl={fromLanguage}&tl={toLanguage}&dt=t&q={HttpUtility.UrlEncode(word)}";
+			var url = 
+$"https://translate.googleapis.com/translate_a/single?client=gtx&sl={fromLanguage}&tl={toLanguage}&dt=t&q={HttpUtility.UrlEncode(word)}";
+
 			var webClient = new WebClient
 			{
 				Encoding = Encoding.UTF8
@@ -156,7 +161,7 @@ namespace Typography
 			if (progressbar)
 				bar.Increase();
 
-			var result = "";
+            string result;
             try
             {
 				result = webClient.DownloadString(url);
@@ -173,6 +178,7 @@ namespace Typography
                 {
 					Program.Error("Too many google translate requests. Chill out");
 
+					//Uses __too many requests__ in Nonsensify but nothing else
 					if (progressbar)
 						return word;
 
@@ -182,9 +188,6 @@ namespace Typography
 				else
 					Program.Error($"Error reaching translate.googleapis.com. ({exc.Message})");
 
-				if (progressbar)
-					bar.Increase(2);
-
 				return word;
             }
 
@@ -193,7 +196,11 @@ namespace Typography
 
 			try
 			{
-				result = result.Substring(4, result.IndexOf("\"", 4, StringComparison.Ordinal) - 4);
+				//weird substring magic because the result looks like this:
+				//[[["Bonjour","hello",null,null,10]],null,"en",null,null,null,null,[]]
+
+				int indexOfSecondQuote = result.IndexOf("\"", 4, StringComparison.Ordinal);
+				result = result.Substring(4, indexOfSecondQuote - 4);
 				return result;
 			}
 			catch (Exception exc)
@@ -245,7 +252,7 @@ namespace Typography
 				"gd",
 				"en",
 			};
-			ProgressBar bar = new ProgressBar($"Nonsensify", lines.Length);
+			ProgressBar bar = new($"Nonsensify", lines.Length);
 
 			string returnVal = input;
             for (int i = 0; i < lines.Length; i++)

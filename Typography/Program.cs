@@ -55,13 +55,13 @@ namespace Typography
             string initialValue = Input.Split(';')[0];
 
             if (Input.Contains(";"))
-                Input = Input.Substring(initialValue.Length + 1);
+                Input = Input[(initialValue.Length + 1)..];
             else
                 Input = "";
 
-            initialValue = methodCode.CheckForVars(initialValue);
+            initialValue = MethodCode.CheckForVars(initialValue);
             MakeMethods(Input);
-            Console.WriteLine($"\n---\n{methodCode.methods["main"].compute(initialValue)}");
+            Console.WriteLine($"\n---\n{MethodCode.methods["main"].Compute(initialValue)}");
         }
 
         public static void MakeMethods(string Input)
@@ -71,7 +71,7 @@ namespace Typography
             if (!stringSplitColon[0].StartsWith(':'))
                 stringSplitColon.Insert(0, "main");
 
-            methodCode.methods.Add("null", new methodCode("null", ""));
+            MethodCode.methods.Add("null", new MethodCode("null", ""));
 
             for (int i = 0; i < stringSplitColon.Count; i += 2)
             {
@@ -81,13 +81,13 @@ namespace Typography
                 string methodName = stringSplitColon[i];
                 string code = stringSplitColon[i + 1];
 
-                if (methodCode.methods.ContainsKey(methodName))
+                if (MethodCode.methods.ContainsKey(methodName))
                 {
                     Error($"Method {methodName} has already been made");
                     continue;
                 }
 
-                methodCode.methods.Add(methodName, new methodCode(methodName, code));
+                MethodCode.methods.Add(methodName, new MethodCode(methodName, code));
             }
         }
 
@@ -100,7 +100,7 @@ namespace Typography
                 returnVal += $" {item}";
             }
 
-            return returnVal.Substring(1);
+            return returnVal[1..];
         }
 
         public static void Error(string message)
@@ -128,7 +128,7 @@ namespace Typography
             if (returnValue.Length == 0)
                 return returnValue;
 
-            return returnValue.Substring(Seperator.Length);
+            return returnValue[Seperator.Length..];
         }
     }
 }

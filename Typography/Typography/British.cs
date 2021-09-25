@@ -8,7 +8,7 @@ namespace Typography
 {
     public static class British
     {
-        public static Dictionary<string, string> dialectAndWords = new Dictionary<string, string>()
+        public static Dictionary<string, string> dialectAndWords = new()
         {
             {"man", "bloke"},
             {"boy", "lad"},
@@ -84,7 +84,7 @@ namespace Typography
             if (Input.Length <= 1)
                 return Input;
 
-            ProgressBar bar = new ProgressBar("Bri'ish (Encode)", splitByWords.Count + dialectAndWords.Count);
+            ProgressBar bar = new("Bri'ish (Encode)", splitByWords.Count + dialectAndWords.Count);
 
             for (int i = 0; i < splitByWords.Count; i++)
             {
@@ -95,11 +95,12 @@ namespace Typography
                     splitByWords[i] = "'" + splitByWords[i][1..];
 
                 if (splitByWords[i].EndsWith("ng"))
-                    splitByWords[i] = splitByWords[i].Substring(0, splitByWords[i].Length - 1) + "'";
+                    splitByWords[i] = splitByWords[i][0..^1] + "'";
 
                 char firstChar = splitByWords[i][0];
-                char lastChar = splitByWords[i][splitByWords[i].Length - 1];
-                string middleChars = splitByWords[i].Substring(1, splitByWords[i].Length - 2);
+                char lastChar = splitByWords[i][^1];
+
+                string middleChars = splitByWords[i][1..^1];
 
                 splitByWords[i] = firstChar + middleChars.Replace("t", "'") + lastChar;
 
@@ -129,7 +130,7 @@ namespace Typography
             string returnValue = input;
             string[] keys = reversedSlang.Keys.OfType<string>().ToArray();
 
-            ProgressBar bar = new ProgressBar("Bri'ish (Decode)", keys.Length + input.Count(f => f == ' '));
+            ProgressBar bar = new("Bri'ish (Decode)", keys.Length + input.Count(f => f == ' '));
 
             List<string> splitByWords = returnValue.Split(' ').ToList();
 
@@ -159,14 +160,14 @@ namespace Typography
                     currentWord = "h" + currentWord[1..];
 
                 if (currentWord.EndsWith("n'"))
-                    currentWord = currentWord.Substring(0, currentWord.Length - 1) + "g";
+                    currentWord = currentWord[0..^1] + "g";
 
 
                 if (currentWord.Length > 3)
                 {
                     char firstChar = currentWord[0];
-                    char lastChar = currentWord[currentWord.Length - 1];
-                    string middleChars = currentWord.Substring(1, currentWord.Length - 2);
+                    char lastChar = currentWord[^1];
+                    string middleChars = currentWord[1..^1];
 
                     currentWord = firstChar + middleChars.Replace("'", "t") + lastChar;
                 }

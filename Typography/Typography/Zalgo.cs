@@ -6,7 +6,7 @@ namespace Typography
     //Credit:: https://github.com/marfgold1/ZalgoCSharp/blob/master/ZalgoOnline.cs
     public class Zalgo
     {
-        static char[] zalgoUp = {
+        static readonly char[] zalgoUp = {
             (char)0x030d,       (char)0x030e,       (char)0x0304,       (char)0x0305,
             (char)0x033f,       (char)0x0311,       (char)0x0306,       (char)0x0310,
             (char)0x0352,       (char)0x0357,       (char)0x0351,       (char)0x0307,
@@ -21,7 +21,7 @@ namespace Typography
             (char)0x036e,       (char)0x036f,       (char)0x033e,       (char)0x035b,
         };
 
-        static char[] zalgoDown = {
+        static readonly char[] zalgoDown = {
             (char)0x0316,       (char)0x0317,       (char)0x0318,       (char)0x0319,
             (char)0x031c,       (char)0x031d,       (char)0x031e,       (char)0x031f,
             (char)0x0320,       (char)0x0324,       (char)0x0325,       (char)0x0326,
@@ -34,7 +34,7 @@ namespace Typography
             (char)0x0356,       (char)0x0359,       (char)0x035a,       (char)0x0323
         };
 
-        static char[] zalgoMid = {
+        static readonly char[] zalgoMid = {
             (char)0x0315,       (char)0x031b,       (char)0x0340,       (char)0x0341,
             (char)0x0358,       (char)0x0321,       (char)0x0322,       (char)0x0327,
             (char)0x0328,       (char)0x0334,       (char)0x0335,       (char)0x0336,
@@ -43,9 +43,9 @@ namespace Typography
             (char)0x0337,       (char)0x0361,       (char)0x0489
         };
 
-        static Random rnd = new Random();
+        static readonly Random rnd = new();
 
-        static bool isZalgoChar(char input)
+        static bool IsZalgoChar(char input)
         {
             if (zalgoUp.Contains(input))
                 return true;
@@ -61,12 +61,12 @@ namespace Typography
 
         public static string Encode(string Input, uint numUp = 15, uint numMid = 15, uint numDown = 15)
         {
-            ProgressBar bar = new ProgressBar("Zalgo (encode)", (int)((numUp * numMid * numDown) * (uint)Input.Length));
+            ProgressBar bar = new("Zalgo (encode)", (int)((numUp * numMid * numDown) * (uint)Input.Length));
             string returnValue = "";
 
             for (int i = 0; i < Input.Length; i++)
             {
-                if (isZalgoChar(Input[i]))
+                if (IsZalgoChar(Input[i]))
                 {
                     bar.Increase(3);
                     continue;
@@ -82,19 +82,19 @@ namespace Typography
 
                 for (int j = 0; j < numUp; j++)
                 {
-                    returnValue += getZalgoChar(zalgoUp, (uint)zalgoUp.Length);
+                    returnValue += GetZalgoChar(zalgoUp, (uint)zalgoUp.Length);
                     bar.Increase();
                 }
 
                 for (int j = 0; j < numMid; j++)
                 {
-                    returnValue += getZalgoChar(zalgoMid, (uint)zalgoMid.Length);
+                    returnValue += GetZalgoChar(zalgoMid, (uint)zalgoMid.Length);
                     bar.Increase();
                 }
 
                 for (int j = 0; j < numDown; j++)
                 {
-                    returnValue += getZalgoChar(zalgoDown, (uint)zalgoDown.Length);
+                    returnValue += GetZalgoChar(zalgoDown, (uint)zalgoDown.Length);
                     bar.Increase();
                 }
             }
@@ -104,13 +104,13 @@ namespace Typography
 
         public static string Decode(string Input)
         {
-            ProgressBar bar = new ProgressBar("Zalgo (decode)", Input.Length);
+            ProgressBar bar = new("Zalgo (decode)", Input.Length);
             string returnVal = "";
             for (int i = 0; i < Input.Length; i++)
             {
                 bar.Increase();
 
-                if (isZalgoChar(Input[i]))
+                if (IsZalgoChar(Input[i]))
                     continue;
                 else
                     returnVal += Input[i];
@@ -119,7 +119,7 @@ namespace Typography
             return returnVal;
         }
 
-        static char getZalgoChar(char[] arr, uint n)
+        static char GetZalgoChar(char[] arr, uint n)
         {
             int index = rnd.Next((int)n);
             return arr[index];

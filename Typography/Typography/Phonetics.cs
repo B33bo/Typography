@@ -8,7 +8,7 @@ namespace Typography
 {
     public static class Phonetics
     {
-        public static List<string> NATO = new List<string>()
+        public static List<string> NATO = new()
         {
             "alfa",
             "bravo",
@@ -38,7 +38,7 @@ namespace Typography
             "zulu",
         };
 
-        static string getWordFor(char letter, List<string> phoneticAlphabet)
+        static string GetWordFor(char letter, List<string> phoneticAlphabet)
         {
             letter = letter.ToLower();
             for (int i = 0; i < phoneticAlphabet.Count; i++)
@@ -53,13 +53,13 @@ namespace Typography
         public static string Encode(string input, List<string> phoneticAlphabet, string ProgressBarName)
         {
             string returnValue = "";
-            ProgressBar bar = new ProgressBar(ProgressBarName, input.Length);
+            ProgressBar bar = new(ProgressBarName, input.Length);
 
             for (int i = 0; i < input.Length; i++)
             {
                 bar.Increase();
 
-                string currentWord = getWordFor(input[i], phoneticAlphabet);
+                string currentWord = GetWordFor(input[i], phoneticAlphabet);
                 if (currentWord == "_ERROR")
                 {
                     if (input[i] == '\n' || input[i] == '\r' || input[i] == ' ')
