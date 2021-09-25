@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +13,7 @@ namespace Typography
         public static string Flip(string Input)
         {
             string returnVal = "";
-            ProgressBar bar = new ProgressBar("Flip", Input.Length);
+            ProgressBar bar = new("Flip", Input.Length);
 
             for (int i = Input.Length - 1; i >= 0; i--)
             {
@@ -31,15 +30,15 @@ namespace Typography
     {
         public static string Jumble(string Input)
         {
-            ProgressBar bar = new ProgressBar("Randomize", Input.Length);
+            ProgressBar bar = new("Randomize", Input.Length);
 
-            List<int> indexesAllowed = new List<int>();
+            List<int> indexesAllowed = new ();
 
             for (int i = 0; i < Input.Length; i++)
                 indexesAllowed.Add(i);
 
             string returnValue = "";
-            Random rng = new Random();
+            Random rng = new();
 
             for (int i = 0; i < Input.Length; i++)
             {
@@ -67,10 +66,10 @@ namespace Typography
 
     public static class SentencePyramid
     {
-        public static string sentencePyramid(string Input)
+        public static string Encode(string Input)
         {
-            ProgressBar bar = new ProgressBar("Sentence Pyramid", (Input.Length * 3) - 2);
-            List<string> ListFormatreturnVal = new List<string>();
+            ProgressBar bar = new("Sentence Pyramid", (Input.Length * 3) - 2);
+            List<string> ListFormatreturnVal = new();
             string returnVal = "";
 
             for (int i = 0; i < Input.Length; i++)
@@ -104,9 +103,9 @@ namespace Typography
         }
     }
 
-    public static class replaceXwithY
+    public static class ReplaceXwithY
     {
-        public static string ReplaceXwithY(string Input, string X, string Y)
+        public static string Encode(string Input, string X, string Y)
         {
             new ProgressBar("Replace", 1, 1).Print();
 
@@ -120,20 +119,20 @@ namespace Typography
         }
     }
 
-    public static class sevenSegDisplay
+    public static class SevenSegDisplay
     {
-        public static bool SevenSegDisplay(string Input)
+        public static bool Encode(string Input)
         {
-            ProgressBar bar = new ProgressBar("7 seg display", 1, 1);
+            ProgressBar bar = new("7 seg display", 1, 1);
             //letters that cannot be put in 7 seg diplay
-            Regex sevenSegDisplay = new Regex("g | k | m | v | w | x | z");
+            Regex sevenSegDisplay = new("g | k | m | v | w | x | z");
 
             bar.Print();
             return !sevenSegDisplay.IsMatch(Input);
         }
     }
 
-    public static class longerAndShorter
+    public static class LongerAndShorter
     {
         public static string Longer(string A, string B)
         {
@@ -151,11 +150,11 @@ namespace Typography
         }
     }
 
-    public static class expand
+    public static class Expand
     {
         public static string Encode(string Input, uint amount)
         {
-            ProgressBar bar = new ProgressBar("Expand (encode)", (int)(Input.Length * amount));
+            ProgressBar bar = new("Expand (encode)", (int)(Input.Length * amount));
             string returnValue = "";
             for (int i = 0; i < Input.Length; i++)
             {
@@ -171,7 +170,7 @@ namespace Typography
 
         public static string Decode(string Input, uint amount)
         {
-            ProgressBar bar = new ProgressBar("Expand (encode)", (int)(Input.Length / amount));
+            ProgressBar bar = new("Expand (encode)", (int)(Input.Length / amount));
             string returnValue = "";
             for (int i = 0; i < Input.Length; i += (int)amount)
             {
@@ -182,11 +181,11 @@ namespace Typography
         }
     }
 
-    public static class discordSpoiler
+    public static class DiscordSpoiler
     {
         public static string Encode(string Input)
         {
-            ProgressBar bar = new ProgressBar("Discord Spoiler (encode)", Input.Length);
+            ProgressBar bar = new("Discord Spoiler (encode)", Input.Length);
 
             string returnValue = "";
             for (int i = 0; i < Input.Length; i++)
@@ -200,7 +199,7 @@ namespace Typography
 
         public static string Decode(string Input)
         {
-            ProgressBar bar = new ProgressBar("Discord Spoiler (decode)", Input.Length);
+            ProgressBar bar = new ("Discord Spoiler (decode)", Input.Length);
 
             string returnVal = "";
             for (int i = 0; i - 3 < Input.Length; i += 5)
@@ -220,7 +219,7 @@ namespace Typography
     {
         public static string Encode(string input)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new ();
             ProgressBar bar = new("Binary (encode)", input.Length);
 
             foreach (char c in input.ToCharArray())
@@ -233,7 +232,7 @@ namespace Typography
 
         public static string Decode(string input)
         {
-            List<byte> byteList = new List<byte>();
+            List<byte> byteList = new();
             ProgressBar bar = new("Binary (decode)", input.Length);
 
             input = input.Replace(" ", "");
@@ -252,8 +251,8 @@ namespace Typography
         public static int[] bases = new int[] { 2, 8, 10, 16 };
         public static string Encode(string input, int NumBase, int padding)
         {
-            ProgressBar bar = new ProgressBar("Number (encode)", input.Length);
-            StringBuilder sb = new StringBuilder();
+            ProgressBar bar = new("Number (encode)", input.Length);
+            StringBuilder sb = new();
 
             if (!bases.Contains(NumBase))
             {
@@ -278,8 +277,8 @@ namespace Typography
         public static string Decode(string input, int NumBase, int padding)
         {
             input = input.Replace(" ", "");
-            ProgressBar bar = new ProgressBar("Number (decode)", input.Length);
-            List<byte> byteList = new List<byte>();
+            ProgressBar bar = new ("Number (decode)", input.Length);
+            List<byte> byteList = new();
 
             if (!bases.Contains(NumBase))
             {
@@ -302,7 +301,7 @@ namespace Typography
         {
             if (Multithreaded)
             {
-                Thread morsecodethread = new Thread(Sing);
+                Thread morsecodethread = new(Sing);
                 morsecodethread.Start(input);
                 return input;
             }
@@ -314,7 +313,7 @@ namespace Typography
         public static void Sing(object Input)
         {
             string morseCode = (string)Input;
-            ProgressBar bar = new ProgressBar("Morse code (sing)", morseCode.Length);
+            ProgressBar bar = new("Morse code (sing)", morseCode.Length);
             for (int i = 0; i < morseCode.Length; i++)
             {
                 bar.Increase();
@@ -357,13 +356,13 @@ namespace Typography
         }
     }
 
-    public static class capsRandomizer
+    public static class CapsRandomizer
     {
         public static string Randomize(string Input)
         {
-            ProgressBar bar = new ProgressBar("Randomize", Input.Length);
+            ProgressBar bar = new("Randomize", Input.Length);
             string returnVal = "";
-            Random rng = new Random();
+            Random rng = new();
 
             for (int i = 0; i < Input.Length; i++)
             {
@@ -377,7 +376,7 @@ namespace Typography
         }
     }
 
-    public static class owoify
+    public static class Owoify
     {
         static readonly char[] vowels = new char[]
         {
@@ -390,7 +389,7 @@ namespace Typography
 
         public static string Encode(string input)
         {
-            ProgressBar bar = new ProgressBar("Owoify", input.Length);
+            ProgressBar bar = new("Owoify", input.Length);
             string returnValue = "";
 
             for (int i = 0; i < input.Length; i++)
@@ -463,7 +462,7 @@ namespace Typography
 
         public static string Decode(string input)
         {
-            ProgressBar bar = new ProgressBar("Numeric Alphabet (Decode)", input.Length);
+            ProgressBar bar = new("Numeric Alphabet (Decode)", input.Length);
             string[] splitInput = input.Split(' ');
             string returnValue = "";
 
@@ -558,7 +557,9 @@ namespace Typography
         {
             string cleanInput = Regex.Replace(input.ToLower(), @"[^a-z]+", "");
 
+#pragma warning disable IDE0066 // Convert switch statement to expression
             switch (cleanInput)
+#pragma warning restore IDE0066 // Convert switch statement to expression
             {
                 default:
                     return input;

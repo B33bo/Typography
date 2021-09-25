@@ -1,9 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Typography
@@ -71,25 +67,25 @@ namespace Typography
                     return InvertCondition.FlipCondition(input);
 
                 case TypographyType.SentencePyramid:
-                    return SentencePyramid.sentencePyramid(input);
+                    return SentencePyramid.Encode(input);
 
                 case TypographyType.sevenSegmentDisplay:
-                    return sevenSegDisplay.SevenSegDisplay(input).ToString();
+                    return SevenSegDisplay.Encode(input).ToString();
 
                 case TypographyType.replaceXwithY:
-                    return replaceXwithY.ReplaceXwithY(input, Params.safeGet(1), Params.safeGet(2));
+                    return ReplaceXwithY.Encode(input, Params.safeGet(1), Params.safeGet(2));
 
                 case TypographyType.longerWord:
                     new ProgressBar("longer", 1, 1).Print();
-                    return longerAndShorter.Longer(input, Params.safeGet(1));
+                    return LongerAndShorter.Longer(input, Params.safeGet(1));
 
                 case TypographyType.shorterWord:
                     new ProgressBar("shorter", 1, 1).Print();
-                    return longerAndShorter.Shorter(input, Params.safeGet(1));
+                    return LongerAndShorter.Shorter(input, Params.safeGet(1));
 
                 case TypographyType.equal:
                     new ProgressBar("equal", 1, 1).Print();
-                    return longerAndShorter.EqualTo(input, Params.safeGet(1)).ToString();
+                    return LongerAndShorter.EqualTo(input, Params.safeGet(1)).ToString();
 
                 case TypographyType.discordemoji:
                     return toEncode ? TextToEncode.Encode(input, TextToEncode.discordEmoji, "Discord Emoji (decode)", " ") :
@@ -181,15 +177,15 @@ namespace Typography
                     if (!uint.TryParse(Params.safeGet(1), out uint expandness))
                         return Program.Error($"{Params.safeGet(1)} is not a positive number", input);
 
-                    return Params.safeGet(2, "true").isTrue() ? expand.Encode(input, expandness) :
-                        expand.Decode(input, expandness);
+                    return Params.safeGet(2, "true").isTrue() ? Expand.Encode(input, expandness) :
+                        Expand.Decode(input, expandness);
 
                 case TypographyType.doubleStruck:
                     return toEncode ? TextToEncode.Encode(input, TextToEncode.doubleStruck, "Double struck (encode)") :
                         TextToEncode.Decode(input, TextToEncode.doubleStruck, "Double struck (decode)");
 
                 case TypographyType.discordSpoiler:
-                    return toEncode ? discordSpoiler.Encode(input) : discordSpoiler.Decode(input);
+                    return toEncode ? DiscordSpoiler.Encode(input) : DiscordSpoiler.Decode(input);
 
                 case TypographyType.morsecode:
                     if (Params.Length >= 2)
@@ -248,10 +244,10 @@ namespace Typography
                     return Caesar.Encode(input, CaesarAmount);
 
                 case TypographyType.capsRandomizer:
-                    return capsRandomizer.Randomize(input);
+                    return CapsRandomizer.Randomize(input);
 
                 case TypographyType.owoify:
-                    return owoify.Encode(input);
+                    return Owoify.Encode(input);
 
                 case TypographyType.set:
                     string value = Params.Length <= 2 ? input : Params[2];
@@ -300,7 +296,7 @@ namespace Typography
                     else
                     {
                         string param1 = Params.safeGet(1);
-                        return input.Substring(param1.Length, input.Length - param1.Length);
+                        return input[param1.Length..];
                     }
 
                 case TypographyType.length:
@@ -451,6 +447,7 @@ namespace Typography
             return input;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0066:Convert switch statement to expression", Justification = "<Pending>")]
         public static string ToReadableString(this TypographyType input)
         {
             switch (input)
@@ -602,156 +599,81 @@ namespace Typography
 
         public static TypographyType ParseAsType(this string input)
         {
-            switch (input.ToLower().Trim())
+            return input.ToLower().Trim() switch
             {
-                default:
-                    return TypographyType.error;
-                case "none":
-                    return TypographyType.None;
-                case "normal":
-                    return TypographyType.Normal;
-                case "reverse":
-                    return TypographyType.Reverse;
-                case "upsidedown":
-                    return TypographyType.Upsideown;
-                case "randomize":
-                    return TypographyType.Randomize;
-                case "error":
-                    return TypographyType.error;
-                case "append":
-                    return TypographyType.append;
-                case "periodic":
-                    return TypographyType.periodicTable;
-                case "big":
-                    return TypographyType.bigLetters;
-                case "copy":
-                    return TypographyType.copyText;
-                case "invertbool":
-                    return TypographyType.invertCondition;
-                case "pyramid":
-                    return TypographyType.SentencePyramid;
-                case "7segdisplay":
-                    return TypographyType.sevenSegmentDisplay;
-                case "replace":
-                    return TypographyType.replaceXwithY;
-                case "longer":
-                    return TypographyType.longerWord;
-                case "shorter":
-                    return TypographyType.shorterWord;
-                case "equal":
-                    return TypographyType.equal;
-                case "discordemoji":
-                    return TypographyType.discordemoji;
-                case "bubble":
-                    return TypographyType.bubble;
-                case "blackbubble":
-                    return TypographyType.blackbubble;
-                case "input":
-                    return TypographyType.userinput;
-                case "inputintovar":
-                    return TypographyType.inputIntoVar;
-                case "repeat":
-                    return TypographyType.repeat;
-                case "oldschool":
-                    return TypographyType.oldSchool;
-                case "write":
-                    return TypographyType.write;
-                case "read":
-                    return TypographyType.read;
-                case "zalgo":
-                    return TypographyType.zalgo;
-                case "expand":
-                    return TypographyType.expand;
-                case "doublestruck":
-                    return TypographyType.doubleStruck;
-                case "spoiler":
-                    return TypographyType.discordSpoiler;
-                case "morsecode":
-                    return TypographyType.morsecode;
-                case "nato":
-                    return TypographyType.nato;
-                case "binary":
-                    return TypographyType.binary;
-                case "numberbase":
-                    return TypographyType.NumberBase;
-                case "hash":
-                    return TypographyType.hash;
-                case "translate":
-                    return TypographyType.googleTranslate;
-                case "nonsensify":
-                    return TypographyType.nonsensify;
-                case "caesar":
-                    return TypographyType.caesar;
-                case "caps":
-                    return TypographyType.capsRandomizer;
-                case "owoify":
-                    return TypographyType.owoify;
-                case "set":
-                    return TypographyType.set;
-                case "change":
-                    return TypographyType.change;
-                case "substring":
-                    return TypographyType.substring;
-                case "appendbehind":
-                    return TypographyType.appendBehind;
-                case "length":
-                    return TypographyType.length;
-                case "lowercase":
-                    return TypographyType.lowercase;
-                case "uppercase":
-                    return TypographyType.uppercase;
-                case "smallcaps":
-                    return TypographyType.smallcaps;
-                case "bold":
-                    return TypographyType.bold;
-                case "italics":
-                    return TypographyType.italics;
-                case "bolditalics":
-                    return TypographyType.bolditalics;
-                case "clear":
-                    return TypographyType.clear;
-                case "htmltxt":
-                    return TypographyType.htmlText;
-                case "call":
-                    return TypographyType.call;
-                case "delay":
-                    return TypographyType.delay;
-                case "if":
-                    return TypographyType.If;
-                case "ifelse":
-                    return TypographyType.IfElse;
-                case "1337":
-                case "leet":
-                    return TypographyType.leetspeak;
-                case "galactic":
-                    return TypographyType.StandardGalacticAlphabet;
-                case "british":
-                    return TypographyType.british;
-                case "numeric":
-                    return TypographyType.numericAlphabet;
-                case "braille":
-                    return TypographyType.braille;
-                case "math":
-                case "maths":
-                    return TypographyType.math;
-                case "badspelling":
-                    return TypographyType.badspelling;
-                case "print":
-                    return TypographyType.print;
-                case "background":
-                    return TypographyType.background;
-                case "showtutorial":
-                    return TypographyType.showtutorial;
-                case "debug":
-                    return TypographyType.debug;
-                case "wordshift":
-                    return TypographyType.wordShift;
-                case "discordtime":
-                    return TypographyType.discordtime;
-                case "":
-                case " ":
-                    return TypographyType.None;
-            }
+                "none" => TypographyType.None,
+                "normal" => TypographyType.Normal,
+                "reverse" => TypographyType.Reverse,
+                "upsidedown" => TypographyType.Upsideown,
+                "randomize" => TypographyType.Randomize,
+                "error" => TypographyType.error,
+                "append" => TypographyType.append,
+                "periodic" => TypographyType.periodicTable,
+                "big" => TypographyType.bigLetters,
+                "copy" => TypographyType.copyText,
+                "invertbool" => TypographyType.invertCondition,
+                "pyramid" => TypographyType.SentencePyramid,
+                "7segdisplay" => TypographyType.sevenSegmentDisplay,
+                "replace" => TypographyType.replaceXwithY,
+                "longer" => TypographyType.longerWord,
+                "shorter" => TypographyType.shorterWord,
+                "equal" => TypographyType.equal,
+                "discordemoji" => TypographyType.discordemoji,
+                "bubble" => TypographyType.bubble,
+                "blackbubble" => TypographyType.blackbubble,
+                "input" => TypographyType.userinput,
+                "inputintovar" => TypographyType.inputIntoVar,
+                "repeat" => TypographyType.repeat,
+                "oldschool" => TypographyType.oldSchool,
+                "write" => TypographyType.write,
+                "read" => TypographyType.read,
+                "zalgo" => TypographyType.zalgo,
+                "expand" => TypographyType.expand,
+                "doublestruck" => TypographyType.doubleStruck,
+                "spoiler" => TypographyType.discordSpoiler,
+                "morsecode" => TypographyType.morsecode,
+                "nato" => TypographyType.nato,
+                "binary" => TypographyType.binary,
+                "numberbase" => TypographyType.NumberBase,
+                "hash" => TypographyType.hash,
+                "translate" => TypographyType.googleTranslate,
+                "nonsensify" => TypographyType.nonsensify,
+                "caesar" => TypographyType.caesar,
+                "caps" => TypographyType.capsRandomizer,
+                "owoify" => TypographyType.owoify,
+                "set" => TypographyType.set,
+                "change" => TypographyType.change,
+                "substring" => TypographyType.substring,
+                "appendbehind" => TypographyType.appendBehind,
+                "length" => TypographyType.length,
+                "lowercase" => TypographyType.lowercase,
+                "uppercase" => TypographyType.uppercase,
+                "smallcaps" => TypographyType.smallcaps,
+                "bold" => TypographyType.bold,
+                "italics" => TypographyType.italics,
+                "bolditalics" => TypographyType.bolditalics,
+                "clear" => TypographyType.clear,
+                "htmltxt" => TypographyType.htmlText,
+                "call" => TypographyType.call,
+                "delay" => TypographyType.delay,
+                "if" => TypographyType.If,
+                "ifelse" => TypographyType.IfElse,
+                "1337" or "leet" => TypographyType.leetspeak,
+                "galactic" => TypographyType.StandardGalacticAlphabet,
+                "british" => TypographyType.british,
+                "numeric" => TypographyType.numericAlphabet,
+                "braille" => TypographyType.braille,
+                "math" or "maths" => TypographyType.math,
+                "badspelling" => TypographyType.badspelling,
+                "print" => TypographyType.print,
+                "background" => TypographyType.background,
+                "showtutorial" => TypographyType.showtutorial,
+                "debug" => TypographyType.debug,
+                "wordshift" => TypographyType.wordShift,
+                "discordtime" => TypographyType.discordtime,
+                "" or " " => TypographyType.None,
+                _ => TypographyType.error,
+            };
         }
     }
 
