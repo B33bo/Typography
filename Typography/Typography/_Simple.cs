@@ -800,6 +800,74 @@ namespace Typography
             {"", "⠼" },
         };
 
+        public static Dictionary<string, string> superscript = new()
+        {
+            { "A", "ᴬ" },
+            { "a", "ᵃ" },
+            { "B", "ᴮ" },
+            { "b", "ᵇ" },
+            { "C", "ᶜ" },
+            { "c", "ᶜ" },
+            { "D", "ᴰ" },
+            { "d", "ᵈ" },
+            { "E", "ᴱ" },
+            { "e", "ᵉ" },
+            { "F", "ᶠ" },
+            { "f", "ᶠ" },
+            { "G", "ᴳ" },
+            { "g", "ᵍ" },
+            { "H", "ᴴ" },
+            { "h", "ʰ" },
+            { "I", "ᴵ" },
+            { "i", "ᶦ" },
+            { "J", "ᴶ" },
+            { "j", "ʲ" },
+            { "K", "ᴷ" },
+            { "k", "ᵏ" },
+            { "L", "ᴸ" },
+            { "l", "ˡ" },
+            { "M", "ᴹ" },
+            { "m", "ᵐ" },
+            { "N", "ᴺ" },
+            { "n", "ⁿ" },
+            { "O", "ᴼ" },
+            { "o", "ᵒ" },
+            { "P", "ᴾ" },
+            { "p", "ᵖ" },
+            { "Q", "Q" },
+            { "q", "ᑫ" },
+            { "R", "ᴿ" },
+            { "r", "ʳ" },
+            { "S", "ˢ" },
+            { "s", "ˢ" },
+            { "T", "ᵀ" },
+            { "t", "ᵗ" },
+            { "U", "ᵁ" },
+            { "u", "ᵘ" },
+            { "V", "ⱽ" },
+            { "v", "ᵛ" },
+            { "W", "ᵂ" },
+            { "w", "ʷ" },
+            { "X", "ˣ" },
+            { "x", "ˣ" },
+            { "Y", "ʸ" },
+            { "y", "ʸ" },
+            { "Z", "ᶻ" },
+            { "z", "ᶻ" },
+            { "1", "¹" },
+            { "2", "²" },
+            { "3", "³" },
+            { "4", "⁴" },
+            { "5", "⁵" },
+            { "6", "⁶" },
+            { "7", "⁷" },
+            { "8", "⁸" },
+            { "9", "⁹" },
+            { "0", "⁰" },
+            { "-", "⁻" },
+            { "=", "⁼" },
+        };
+
         public static string[] ToStringArray(this char[] c)
         {
             string[] returnValue = new string[c.Length];
@@ -887,6 +955,21 @@ namespace Typography
             }
 
             return returnValue;
+        }
+
+        public static string RepeatUntilLength(string Input, uint length)
+        {
+            if (Input.Length > length)
+                return Program.Error($"{Input} is already over {length}", Input);
+
+            string returnValue = "";
+            while (true)
+            {
+                if (returnValue.Length + Input.Length > length)
+                    return returnValue;
+
+                returnValue += Input;
+            }
         }
     }
 }

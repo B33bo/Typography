@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 
 namespace Typography
 {
@@ -76,16 +77,19 @@ namespace Typography
                     return ReplaceXwithY.Encode(input, Params.SafeGet(1), Params.SafeGet(2));
 
                 case TypographyType.longerWord:
-                    new ProgressBar("longer", 1, 1).Print();
-                    return LongerAndShorter.Longer(input, Params.SafeGet(1));
+                    string Along = Params.SafeGet(1);
+                    string Blong = Params.SafeGet(2, input);
+
+                    return Along.Length < Blong.Length ? Along : Blong;
 
                 case TypographyType.shorterWord:
-                    new ProgressBar("shorter", 1, 1).Print();
-                    return LongerAndShorter.Shorter(input, Params.SafeGet(1));
+                    string Ashort = Params.SafeGet(1);
+                    string Bshort = Params.SafeGet(2, input);
+
+                    return Ashort.Length > Bshort.Length ? Ashort : Bshort;
 
                 case TypographyType.equal:
-                    new ProgressBar("equal", 1, 1).Print();
-                    return LongerAndShorter.EqualTo(input, Params.SafeGet(1)).ToString();
+                    return (Params.SafeGet(1) == Params.SafeGet(2, input)).ToString();
 
                 case TypographyType.discordemoji:
                     return toEncode ? TextToEncode.Encode(input, TextToEncode.discordEmoji, "Discord Emoji (decode)", " ") :
@@ -108,7 +112,7 @@ namespace Typography
 
                 case TypographyType.repeat:
                     if (!int.TryParse(Params.SafeGet(1), out int res))
-                        return Program.Error($"'{Params.SafeGet(1)}' is not a string.", input);
+                        return Program.Error($"'{Params.SafeGet(1)}' is not a number.", input);
 
                     bool isTrue = Params.SafeGet(2, "true").IsTrue();
 
@@ -210,10 +214,9 @@ namespace Typography
                     {
                         if (!int.TryParse(Params.SafeGet(2), out BaseForEncoding) ||
                             !int.TryParse(Params.SafeGet(3), out padding))
-                        {
                             return Program.Error($"Either {Params.SafeGet(2)} or {Params.SafeGet(3)} was not an int", input);
-                        }
                     }
+
                     else if (Params.Length == 3)
                     {
                         if (!int.TryParse(Params.SafeGet(1), out BaseForEncoding) ||
@@ -223,6 +226,12 @@ namespace Typography
                         }
 
                         return Number.Encode(input, BaseForEncoding, padding);
+                    }
+
+                    if (Params.SafeGet(4, "false").IsTrue())
+                    {
+                        return toEncode ? Number.EncodeNum(input, BaseForEncoding, padding) :
+                            Number.DecodeNum(input, BaseForEncoding).ToString();
                     }
 
                     return toEncode ? Number.Encode(input, BaseForEncoding, padding) :
@@ -256,6 +265,7 @@ namespace Typography
                         MethodCode.variables[Params.SafeGet(1).ToLower()] = value;
                     else
                         MethodCode.variables.Add(Params.SafeGet(1).ToLower(), value);
+
                     return input;
 
                 case TypographyType.change:
@@ -296,6 +306,9 @@ namespace Typography
                     else
                     {
                         string param1 = Params.SafeGet(1);
+
+                        if (param1.Length > input.Length)
+                            return Program.Error($"{param1.Length} is longer than {input} (original)", input);
                         return input[param1.Length..];
                     }
 
@@ -349,21 +362,16 @@ namespace Typography
                     if (!MethodCode.methods.ContainsKey(Params.SafeGet(1)))
                         return Program.Error($"Method {Params.SafeGet(1)} does not exist!", input);
 
-                    if (input.ToLower() == "true")
+                    if (Params.Length > 2)
+                        if (!MethodCode.methods.ContainsKey(Params.SafeGet(2)))
+                            return Program.Error($"Method {Params.SafeGet(2)} does not exist!", input);
+
+                    if (input.IsTrue())
                         return MethodCode.methods[Params.SafeGet(1)].Compute(input);
+                    else if (Params.Length > 2)
+                        return MethodCode.methods[Params.SafeGet(2)].Compute(input);
 
                     return input;
-                case TypographyType.IfElse:
-                    if (!MethodCode.methods.ContainsKey(Params.SafeGet(1)))
-                        return Program.Error($"Method {Params.SafeGet(1)} does not exist!", input);
-
-                    if (!MethodCode.methods.ContainsKey(Params.SafeGet(2)))
-                        return Program.Error($"Method {Params.SafeGet(2)} does not exist!", input);
-
-                    if (input.ToLower() == "true")
-                        return MethodCode.methods[Params.SafeGet(1)].Compute(input);
-
-                    return MethodCode.methods[Params.SafeGet(2)].Compute(input);
 
                 case TypographyType.leetspeak:
                     return toEncode ? TextToEncode.Encode(input, TextToEncode.leetSpeak, "1337 speak (encode)", "", "", false) :
@@ -384,16 +392,35 @@ namespace Typography
                         Braille.Decode(input);
 
                 case TypographyType.math:
-                    if (!double.TryParse(input, out double mathsResult))
-                        return Program.Error($"maths : {input} (input) is not a number", input);
+
+                    double mathsA;
+                    double mathsB;
+                    string oper;
+                    if (Params.Length >= 4)
+                    {
+                        oper = Params.SafeGet(2);
+
+                        if (!double.TryParse(Params.SafeGet(1), out mathsA))
+                            return Program.Error($"maths : {Params.SafeGet(1)} is not a number", input);
+
+                        if (!double.TryParse(Params.SafeGet(3, "0"), out mathsB))
+                            return Program.Error($"maths : {Params.SafeGet(3)} is not a number", input);
+                    }
+                    else
+                    {
+                        oper = Params.SafeGet(1);
+
+                        if (!double.TryParse(input, out mathsA))
+                            return Program.Error($"maths : {input} (input) is not a number", input);
+
+                        if (!double.TryParse(Params.SafeGet(2, "0"), out mathsB))
+                            return Program.Error($"maths : {Params.SafeGet(2)} is not a number", input);
+                    }
 
                     if (Params.Length <= 2)
-                        return MathsSolve.Value(mathsResult, Params.SafeGet(1)).ToString();
+                        return MathsSolve.Value(mathsA, oper).ToString();
 
-                    if (!double.TryParse("0" + Params.SafeGet(2), out double mathsResultNum2))
-                        return Program.Error($"maths : {Params.SafeGet(2)} (param) is not a number", input);
-
-                    return MathsSolve.Value(mathsResult, Params.SafeGet(1), mathsResultNum2).ToString();
+                    return MathsSolve.Value(mathsA, oper, mathsB).ToString();
 
                 case TypographyType.badspelling:
                     return BadSpelling.Encode(input);
@@ -441,13 +468,81 @@ namespace Typography
 
                 case TypographyType.discordtime:
                     return ToDiscordTimestamp.Encode(input, Params.SafeGet(1, "f"));
+
+                case TypographyType.sprinkle:
+
+                    if (!uint.TryParse(Params.SafeGet(2), out uint sprinkleFreq))
+                        return Program.Error($"{Params.SafeGet(2)} is not a positive number", input);
+
+                    return Sprinkle.Encode(input, Params.SafeGet(1), sprinkleFreq);
+
+                case TypographyType.superscript:
+                    return toEncode ? TextToEncode.Encode(input, TextToEncode.superscript, "Superscript (encode)") :
+                        TextToEncode.Decode(input, TextToEncode.superscript, "Superscript (decode)");
+
+                case TypographyType.parseUnicodeChars:
+                    try
+                    {
+                        return Regex.Unescape(input);
+                    }
+                    catch (RegexParseException)
+                    {
+                        return Program.Error($"Cannot parse {input} into unicode", input);
+                    }
+
+                case TypographyType.parseVars:
+                    return MethodCode.CheckForVars(input);
+
+                case TypographyType.increase:
+                    string varName = Params.SafeGet(1).ToLower();
+
+                    if (!MethodCode.variables.ContainsKey(varName))
+                        return Program.Error($"Increase: {varName} is not a variable", input);
+
+                    if (!double.TryParse(MethodCode.variables[varName], out double variableToIncrease))
+                        return Program.Error($"Increase: var {MethodCode.variables[varName]} is not a number", input);
+
+                    if (Params.Length <= 2)
+                    {
+                        MethodCode.variables[varName] = (variableToIncrease + 1).ToString();
+                        Program.Debug($"{varName} = {MethodCode.variables[varName]}");
+
+                        return input;
+                    }
+
+                    if (!double.TryParse(Params.SafeGet(2), out double increaseResult))
+                        return Program.Error($"Increase: {Params.SafeGet(2)} is not a number", input);
+
+                    MethodCode.variables[varName] = (variableToIncrease + increaseResult).ToString();
+                        Program.Debug($"{varName} = {MethodCode.variables[varName]}");
+
+                    return input;
+
+                case TypographyType.callmethodfor:
+                    string varname = Params.SafeGet(2);
+
+                    if (!MethodCode.variables.ContainsKey(varname))
+                        return Program.Error($"{varname} is not a variable", input);
+
+                    if (!MethodCode.methods.ContainsKey(Params.SafeGet(1)))
+                        return Program.Error($"{Params.SafeGet(1)} is not a variable", input);
+
+                    MethodCode.variables[varname] = MethodCode.methods[Params.SafeGet(1)].Compute(MethodCode.variables[varname]);
+                    return input;
+                case TypographyType.repeatuntilover:
+
+                    if (!uint.TryParse(Params.SafeGet(1), out uint repeatLength))
+                        return Program.Error($"'{Params.SafeGet(1)}' is not a positive integer.", input);
+
+                    Console.WriteLine(Params.SafeGet(2, "true"));
+                    return TextToEncode.RepeatUntilLength(input, repeatLength);
             }
 
             Program.Error($"{type} is not yet implemented");
             return input;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0066:Convert switch statement to expression", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0066:Convert switch statement to expression", Justification = "It's annoting")]
         public static string ToReadableString(this TypographyType input)
         {
             switch (input)
@@ -485,7 +580,7 @@ namespace Typography
                 case TypographyType.shorterWord:
                     return "X shorter than Y        shorter~Y";
                 case TypographyType.equal:
-                    return "X equal length to Y     equal";
+                    return "X equal length to Y     equal~Y";
                 case TypographyType.discordemoji:
                     return "discord emoji speak     discordemoji~encode/decode";
                 case TypographyType.bubble:
@@ -519,7 +614,7 @@ namespace Typography
                 case TypographyType.binary:
                     return "binary                  binary~encode/decode";
                 case TypographyType.NumberBase:
-                    return "NumberBase              NumberBase~encode/decode~base~padding";
+                    return "Convert to base         NumBase~encode/decode~base~padding~intmode";
                 case TypographyType.hash:
                     return "hash                    hash~sha1/sha256/sha384/sha512/md5";
                 case TypographyType.googleTranslate:
@@ -564,8 +659,6 @@ namespace Typography
                     return "Pause for time          delay~milloseconds";
                 case TypographyType.If:
                     return "if bool call value      if~methodname";
-                case TypographyType.IfElse:
-                    return "if bool else            if~callIfTrue~callIfFalse";
                 case TypographyType.leetspeak:
                     return "1337 5p34k              1337~encode/decode";
                 case TypographyType.StandardGalacticAlphabet:
@@ -592,6 +685,20 @@ namespace Typography
                     return "Word shift              wordshift~amount";
                 case TypographyType.discordtime:
                     return "Discord Time            discordtime~encoding";
+                case TypographyType.sprinkle:
+                    return "Sprinkle letters        sprinkle~item~frequency";
+                case TypographyType.superscript:
+                    return "Superscript             superscript~encode/decode";
+                case TypographyType.parseUnicodeChars:
+                    return "Parse unicode chars     unicodechars";
+                case TypographyType.parseVars:
+                    return "Parse all variables     parsvars";
+                case TypographyType.increase:
+                    return "Increase Variable       increase~name~by";
+                case TypographyType.callmethodfor:
+                    return "Call method for var     callmethodfor~method~varname";
+                case TypographyType.repeatuntilover:
+                    return "Repeat until over       repeatuntilover~length";
                 default:
                     return input.ToString();
             }
@@ -634,7 +741,7 @@ namespace Typography
                 "morsecode" => TypographyType.morsecode,
                 "nato" => TypographyType.nato,
                 "binary" => TypographyType.binary,
-                "numberbase" => TypographyType.NumberBase,
+                "numbase" => TypographyType.NumberBase,
                 "hash" => TypographyType.hash,
                 "translate" => TypographyType.googleTranslate,
                 "nonsensify" => TypographyType.nonsensify,
@@ -657,7 +764,6 @@ namespace Typography
                 "call" => TypographyType.call,
                 "delay" => TypographyType.delay,
                 "if" => TypographyType.If,
-                "ifelse" => TypographyType.IfElse,
                 "1337" or "leet" => TypographyType.leetspeak,
                 "galactic" => TypographyType.StandardGalacticAlphabet,
                 "british" => TypographyType.british,
@@ -671,6 +777,13 @@ namespace Typography
                 "debug" => TypographyType.debug,
                 "wordshift" => TypographyType.wordShift,
                 "discordtime" => TypographyType.discordtime,
+                "sprinkle" => TypographyType.sprinkle,
+                "superscript" => TypographyType.superscript,
+                "unicodechars" => TypographyType.parseUnicodeChars,
+                "parsevars" => TypographyType.parseVars,
+                "increase" => TypographyType.increase,
+                "callmethodfor" => TypographyType.callmethodfor,
+                "repeatuntilover" => TypographyType.repeatuntilover,
                 "" or " " => TypographyType.None,
                 _ => TypographyType.error,
             };
@@ -735,7 +848,6 @@ namespace Typography
         call,
         delay,
         If,
-        IfElse,
         leetspeak,
         StandardGalacticAlphabet,
         british,
@@ -749,5 +861,12 @@ namespace Typography
         debug,
         wordShift,
         discordtime,
+        sprinkle,
+        superscript,
+        parseUnicodeChars,
+        parseVars,
+        increase,
+        callmethodfor,
+        repeatuntilover,
     }
 }

@@ -240,7 +240,15 @@ namespace Typography
             for (int i = 0; i < input.Length; i += 8)
             {
                 bar.Increase();
-                byteList.Add(Convert.ToByte(input.Substring(i, 8), 2));
+
+                try
+                {
+                    byteList.Add(Convert.ToByte(input.Substring(i, 8), 2));
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    Program.Error($"{input} is not a valid binary");
+                }
             }
             return Encoding.ASCII.GetString(byteList.ToArray());
         }
@@ -292,6 +300,19 @@ namespace Typography
                 byteList.Add(Convert.ToByte(input.Substring(i, padding), NumBase));
             }
             return Encoding.ASCII.GetString(byteList.ToArray());
+        }
+
+        public static int DecodeNum(string input, int NumBase)
+        {
+            return Convert.ToInt32(input, NumBase);
+        }
+
+        public static string EncodeNum(string input, int NumBase, int padding)
+        {
+            if (!int.TryParse(input, out int intput))
+                return Program.Error($"Number: {input} isn't an int", input);
+
+            return Convert.ToString(intput, NumBase).PadLeft(padding, '0');
         }
     }
 
@@ -589,6 +610,20 @@ namespace Typography
                 case "hoursminutesseconds":
                     return "T";
             }
+        }
+    }
+
+    public static class Sprinkle
+    {
+        public static string Encode(string input, string item, uint frequency)
+        {
+            for (uint i = 0; i < input.Length; i += frequency)
+            {
+                input = input.Insert((int)i, item);
+                i += (uint)item.Length;
+            }
+
+            return input;
         }
     }
 }

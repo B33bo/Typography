@@ -27,9 +27,27 @@ namespace Typography
         [STAThread]
         public static void Main(string[] args)
         {
+            //PRODUCTION::
+
+            /*try
+            {
+                DoCode(args);
+            }
+            catch (Exception exc)
+            {
+                Error($"FATAL! {exc}");
+                Console.ReadLine();
+                throw;
+            }*/
+
+            //DEV::
+            DoCode(args);
+        }
+
+        private static void DoCode(string[] args)
+        {
             uptime.Start();
             runMode = args.Length > 0 ? RunMode.cmdMode : RunMode.exeFile;
-
 
             if (runMode == RunMode.exeFile)
             {
@@ -52,6 +70,25 @@ namespace Typography
                 }
             }
 
+            if (Input.ToLower() == "multiline")
+            {
+                Input = "";
+                Console.WriteLine($"Multiline mode enabled. Type \"end\" to exit");
+
+                while (true)
+                {
+                    string inputNew = Console.ReadLine();
+
+                    if (inputNew == "end" || inputNew == "")
+                        break;
+
+                    if (!inputNew.EndsWith(';'))
+                        inputNew += ";";
+
+                    Input += inputNew;
+                }
+            }
+
             string initialValue = Input.Split(';')[0];
 
             if (Input.Contains(";"))
@@ -62,6 +99,12 @@ namespace Typography
             initialValue = MethodCode.CheckForVars(initialValue);
             MakeMethods(Input);
             Console.WriteLine($"\n---\n{MethodCode.methods["main"].Compute(initialValue)}");
+
+            if (DebugMode)
+            {
+                Console.WriteLine("END OF FILE REACHED");
+                Console.ReadLine();
+            }
         }
 
         public static void MakeMethods(string Input)
@@ -79,6 +122,10 @@ namespace Typography
                     break;
 
                 string methodName = stringSplitColon[i];
+
+                if (stringSplitColon.Count == i + 1)
+                    continue;
+
                 string code = stringSplitColon[i + 1];
 
                 if (MethodCode.methods.ContainsKey(methodName))
@@ -106,6 +153,16 @@ namespace Typography
         public static void Error(string message)
         {
             Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\n" + message);
+            Console.ResetColor();
+        }
+
+        public static void Debug(string message)
+        {
+            if (!DebugMode)
+                return;
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("\n" + message);
             Console.ResetColor();
         }

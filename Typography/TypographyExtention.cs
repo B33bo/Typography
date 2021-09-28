@@ -103,6 +103,9 @@ namespace Typography
 
         public static bool IsTrue(this string str)
         {
+            if (str.Length == 0)
+                return false;
+
             if (str.ToLower()[0] == 'e')
                 return true;
 

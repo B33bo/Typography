@@ -28,13 +28,15 @@ namespace Typography
             { "inf", double.PositiveInfinity.ToString() },
             { "-inf", double.NegativeInfinity.ToString() },
             { "clipboard", "" },
+            { "randomchar", "" },
+            { "randomalphabet", "" },
             { "uptime", "" },
             { "input", "" },
-            { "debug", "" },
             { "whitespace", "	" },
             { "zerowidth", "​" },
+            { "combining", "̾​" },
             { "sus", "ඞ​" },
-            { "right-to-left", "ً​" },
+            { "right-to-left", "‮" },
 
             { "disc_bold", "**"},
             { "disc_italics", "_"},
@@ -82,10 +84,10 @@ namespace Typography
             string returnValue = inputVar;
             for (int i = 0; i < commands.Length; i++)
             {
-                commands[i] = CheckForVars(commands[i]);
+                string LookedForVars = CheckForVars(commands[i]);
                 inputVar = CheckForVars(inputVar);
 
-                string[] Params = commands[i].Split('~');
+                string[] Params = LookedForVars.Split('~');
                 string command = Params[0];
 
                 if (Program.DebugMode)
@@ -99,6 +101,7 @@ namespace Typography
                 returnValue = Typography.DoTypographyType(command.ParseAsType(), returnValue, Params);
             }
 
+            Program.Debug($"End of method {methodName}");
             return returnValue;
         }
 
@@ -114,6 +117,7 @@ namespace Typography
 
         public static string CheckForVars(string input)
         {
+            Random rnd = new();
             ReassignChangingVariables();
             string currentPercent = "";
             string returnValue = "";
@@ -121,6 +125,9 @@ namespace Typography
 
             for (int i = 0; i < input.Length; i++)
             {
+                variables["randomchar"] = ((char)rnd.Next(char.MinValue, char.MaxValue)).ToString();
+                variables["randomalphabet"] = ((char)rnd.Next('a', 'z')).ToString();
+
                 bool isFinalCharacter = i + 1 == input.Length;
 
                 //escape sequences
@@ -142,13 +149,13 @@ namespace Typography
                     isInPercent = !isInPercent;
 
                     if (variables.ContainsKey(currentPercent.ToLower()))
+                    {
+                        Program.Debug($"Found var {currentPercent.ToLower()} as {variables[currentPercent.ToLower()]}");
                         returnValue += variables[currentPercent.ToLower()];
+                    }
 
                     else if (!isInPercent)
-                    {
-                        Program.Error($"{currentPercent} is not a variable");
                         returnValue += $"%{currentPercent}%";
-                    }
 
                     currentPercent = "";
                     continue;
@@ -164,6 +171,17 @@ namespace Typography
                 returnValue += "%" + currentPercent;
 
             return returnValue;
+        }
+
+        public static string[] CheckForVars(string[] input)
+        {
+            string[] returnVal = new string[input.Length];
+            for (int i = 0; i < input.Length; i++)
+            {
+                returnVal[i] = CheckForVars(input[i]);
+            }
+
+            return returnVal;
         }
     }
 }
