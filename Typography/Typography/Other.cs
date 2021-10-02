@@ -617,13 +617,53 @@ namespace Typography
     {
         public static string Encode(string input, string item, uint frequency)
         {
+            ProgressBar bar = new("Sprinkle", input.Length / (int)frequency);
+
             for (uint i = 0; i < input.Length; i += frequency)
             {
+                bar.Increase();
                 input = input.Insert((int)i, item);
                 i += (uint)item.Length;
             }
 
             return input;
+        }
+    }
+
+    public static class IncreaseVar
+    { 
+        public static void IncreaseMyVar(string[] Params, string input)
+        {
+            string varName = Params.SafeGet(1).ToLower();
+
+            if (!MethodCode.variables.ContainsKey(varName))
+            {
+                Program.Error($"Increase: {varName} is not a variable");
+                return;
+            }
+
+            if (!double.TryParse(MethodCode.variables[varName], out double variableToIncrease))
+            {
+                Program.Error($"Increase: var {MethodCode.variables[varName]} is not a number");
+                return;
+            }
+
+            if (Params.Length <= 2)
+            {
+                MethodCode.variables[varName] = (variableToIncrease + 1).ToString();
+                Program.Debug($"{varName} = {MethodCode.variables[varName]}");
+
+                return;
+            }
+
+            if (!double.TryParse(Params.SafeGet(2), out double increaseResult))
+            {
+                Program.Error($"Increase: {Params.SafeGet(2)} is not a number");
+                return;
+            }
+
+            MethodCode.variables[varName] = (variableToIncrease + increaseResult).ToString();
+            Program.Debug($"{varName} = {MethodCode.variables[varName]}");
         }
     }
 }

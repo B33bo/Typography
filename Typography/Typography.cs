@@ -491,31 +491,10 @@ namespace Typography
                     }
 
                 case TypographyType.parseVars:
-                    return MethodCode.CheckForVars(input);
+                    return MethodCode.CheckForVars(input, true);
 
                 case TypographyType.increase:
-                    string varName = Params.SafeGet(1).ToLower();
-
-                    if (!MethodCode.variables.ContainsKey(varName))
-                        return Program.Error($"Increase: {varName} is not a variable", input);
-
-                    if (!double.TryParse(MethodCode.variables[varName], out double variableToIncrease))
-                        return Program.Error($"Increase: var {MethodCode.variables[varName]} is not a number", input);
-
-                    if (Params.Length <= 2)
-                    {
-                        MethodCode.variables[varName] = (variableToIncrease + 1).ToString();
-                        Program.Debug($"{varName} = {MethodCode.variables[varName]}");
-
-                        return input;
-                    }
-
-                    if (!double.TryParse(Params.SafeGet(2), out double increaseResult))
-                        return Program.Error($"Increase: {Params.SafeGet(2)} is not a number", input);
-
-                    MethodCode.variables[varName] = (variableToIncrease + increaseResult).ToString();
-                        Program.Debug($"{varName} = {MethodCode.variables[varName]}");
-
+                    IncreaseVar.IncreaseMyVar(Params, input);
                     return input;
 
                 case TypographyType.callmethodfor:
@@ -529,20 +508,24 @@ namespace Typography
 
                     MethodCode.variables[varname] = MethodCode.methods[Params.SafeGet(1)].Compute(MethodCode.variables[varname]);
                     return input;
+
                 case TypographyType.repeatuntilover:
 
                     if (!uint.TryParse(Params.SafeGet(1), out uint repeatLength))
                         return Program.Error($"'{Params.SafeGet(1)}' is not a positive integer.", input);
 
-                    Console.WriteLine(Params.SafeGet(2, "true"));
                     return TextToEncode.RepeatUntilLength(input, repeatLength);
+
+                case TypographyType.unicrush:
+                    return toEncode ? Crush.Encode(input, Params.SafeGet(2, "true").IsTrue()) :
+                        Crush.Decode(input);
             }
 
             Program.Error($"{type} is not yet implemented");
             return input;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0066:Convert switch statement to expression", Justification = "It's annoting")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0066:Convert switch statement to expression", Justification = "It's annoying")]
         public static string ToReadableString(this TypographyType input)
         {
             switch (input)
@@ -699,6 +682,8 @@ namespace Typography
                     return "Call method for var     callmethodfor~method~varname";
                 case TypographyType.repeatuntilover:
                     return "Repeat until over       repeatuntilover~length";
+                case TypographyType.unicrush:
+                    return "Crush chars             crush~encode/decode~allowIffy";
                 default:
                     return input.ToString();
             }
@@ -784,6 +769,7 @@ namespace Typography
                 "increase" => TypographyType.increase,
                 "callmethodfor" => TypographyType.callmethodfor,
                 "repeatuntilover" => TypographyType.repeatuntilover,
+                "unicrush" or "crush" => TypographyType.unicrush,
                 "" or " " => TypographyType.None,
                 _ => TypographyType.error,
             };
@@ -868,5 +854,6 @@ namespace Typography
         increase,
         callmethodfor,
         repeatuntilover,
+        unicrush,
     }
 }

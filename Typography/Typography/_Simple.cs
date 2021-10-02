@@ -959,6 +959,8 @@ namespace Typography
 
         public static string RepeatUntilLength(string Input, uint length)
         {
+            ProgressBar bar = new("Repeat until length", (int)Math.Ceiling((float)length / Input.Length));
+
             if (Input.Length > length)
                 return Program.Error($"{Input} is already over {length}", Input);
 
@@ -967,6 +969,8 @@ namespace Typography
             {
                 if (returnValue.Length + Input.Length > length)
                     return returnValue;
+
+                bar.Increase();
 
                 returnValue += Input;
             }

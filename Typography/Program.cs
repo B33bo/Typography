@@ -29,7 +29,7 @@ namespace Typography
         {
             //PRODUCTION::
 
-            /*try
+            try
             {
                 DoCode(args);
             }
@@ -38,10 +38,10 @@ namespace Typography
                 Error($"FATAL! {exc}");
                 Console.ReadLine();
                 throw;
-            }*/
+            }
 
             //DEV::
-            DoCode(args);
+            //DoCode(args);
         }
 
         private static void DoCode(string[] args)

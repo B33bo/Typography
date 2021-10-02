@@ -115,8 +115,13 @@ namespace Typography
             variables["debug"] = Program.DebugMode.ToString();
         }
 
-        public static string CheckForVars(string input)
+        public static string CheckForVars(string input, bool progressBar = false)
         {
+            ProgressBar bar = null;
+
+            if (progressBar)
+                bar = new("Check for vars", input.Length);
+
             Random rnd = new();
             ReassignChangingVariables();
             string currentPercent = "";
@@ -125,6 +130,9 @@ namespace Typography
 
             for (int i = 0; i < input.Length; i++)
             {
+                if (progressBar)
+                    bar.Increase();
+
                 variables["randomchar"] = ((char)rnd.Next(char.MinValue, char.MaxValue)).ToString();
                 variables["randomalphabet"] = ((char)rnd.Next('a', 'z')).ToString();
 
