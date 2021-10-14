@@ -82,10 +82,7 @@ namespace Typography
                     if (inputNew == "end" || inputNew == "")
                         break;
 
-                    if (!inputNew.EndsWith(';'))
-                        inputNew += ";";
-
-                    Input += inputNew;
+                    Input += inputNew + "\n";
                 }
             }
 
