@@ -29,7 +29,8 @@ namespace Typography
                     return Upsidedown.Upsideown(input);
 
                 case TypographyType.Randomize:
-                    return Randomize.Jumble(input);
+                    return toEncode ? Randomize.Jumble(input) :
+                        AnagramSolver.DeAnagram(input);
 
                 case TypographyType.error:
                     bool fromUser = Params[0].ToLower() == "error";
@@ -539,7 +540,7 @@ namespace Typography
                 case TypographyType.Upsideown:
                     return "Upsideown               upsidedown";
                 case TypographyType.Randomize:
-                    return "Randomize               randomize";
+                    return "Anagram                 anagram";
                 case TypographyType.error:
                     return "error                   error";
                 case TypographyType.append:
@@ -699,7 +700,7 @@ namespace Typography
                 "normal" => TypographyType.Normal,
                 "reverse" => TypographyType.Reverse,
                 "upsidedown" => TypographyType.Upsideown,
-                "randomize" => TypographyType.Randomize,
+                "randomize" or "anagram" => TypographyType.Randomize,
                 "error" => TypographyType.error,
                 "append" => TypographyType.append,
                 "periodic" => TypographyType.periodicTable,

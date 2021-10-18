@@ -30,7 +30,7 @@ namespace Typography
     {
         public static string Jumble(string Input)
         {
-            ProgressBar bar = new("Randomize", Input.Length);
+            ProgressBar bar = new("Anagram", Input.Length);
 
             List<int> indexesAllowed = new ();
 
