@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using Typography;
+using Typography.Meta;
 
 namespace Typography
 {

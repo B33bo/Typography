@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Diagnostics;
 
-namespace Typography
+namespace Typography.Meta
 {
     public class ProgressBar
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using Typography.Meta;
 
 namespace Typography
 {
@@ -61,7 +61,7 @@ namespace Typography
                     if (input == string.Empty)
                         Program.Error("Cannot copy empty string!!");
                     else
-                        Clipboard.SetText(input);
+                        System.Windows.Forms.Clipboard.SetText(input);
 
                     return input;
 
@@ -685,8 +685,6 @@ namespace Typography
                     return "Repeat until over       repeatuntilover~length";
                 case TypographyType.unicrush:
                     return "Crush chars             crush~encode/decode~allowIffy";
-                case TypographyType.regex:
-                    return "Regex                   regex";
                 default:
                     return input.ToString();
             }
@@ -773,7 +771,6 @@ namespace Typography
                 "callmethodfor" => TypographyType.callmethodfor,
                 "repeatuntilover" => TypographyType.repeatuntilover,
                 "unicrush" or "crush" => TypographyType.unicrush,
-                "regex" => TypographyType.regex,
                 "" or " " => TypographyType.None,
                 _ => TypographyType.error,
             };
@@ -859,6 +856,5 @@ namespace Typography
         callmethodfor,
         repeatuntilover,
         unicrush,
-        regex,
     }
 }

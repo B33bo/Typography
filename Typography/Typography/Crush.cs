@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Typography.Meta;
 using System.Threading.Tasks;
 
 namespace Typography
@@ -10,7 +11,7 @@ namespace Typography
     public static class Crush
     {
         public static uint highestLength = 0;
-        public static Dictionary<string, string> normal = new Dictionary<string, string>()
+        public static Dictionary<string, string> normal = new()
         {
             {"<<", "«"},
             {">>", "»"},
@@ -289,7 +290,7 @@ namespace Typography
             {"Wb", "㏝"},
         };
 
-        public static Dictionary<string, string> iffy = new Dictionary<string, string>()
+        public static Dictionary<string, string> iffy = new()
         {
             {"hu", "ƕ"},
             {"Hu", "Ƕ"},

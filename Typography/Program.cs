@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Typography;
 
-namespace Typography
+namespace Typography.Meta
 {
     class Program
     {
