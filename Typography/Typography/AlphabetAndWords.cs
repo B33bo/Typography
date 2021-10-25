@@ -8,10 +8,9 @@ using System.Threading.Tasks;
 
 namespace Typography
 {
-
     public static class AlphabetAndWords
     {
-        public static List<char> alphabet = new()
+        public static char[] alphabet = new char[]
         {
             'a',
             'b',
@@ -62,5 +61,8 @@ namespace Typography
                 return words;
             }
         }
+
+        public static string[] vowels = new string[] { "a", "e", "i", "o", "u", "y" };
+        public static string[] consonants = new string[] { "b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
     }
 }

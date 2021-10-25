@@ -10,13 +10,13 @@ namespace Typography.Meta
         public static Dictionary<string, string> variables = new()
         {
             { @"\n", "\n" },
-            { @"\r", "\r"},
+            { @"\r", "\r" },
             { "tstvar", "testing123" },
             { "percent", "%" },
             { "semicolon", ";" },
             { "colon", ":" },
             { "tilda", "~" },
-            { "runmode", "Unknown"},
+            { "runmode", "Unknown" },
             { "time", "Unknown" },
             { "true", "True" },
             { "false", "False" },
@@ -27,10 +27,13 @@ namespace Typography.Meta
             { "nan", double.NaN.ToString() },
             { "inf", double.PositiveInfinity.ToString() },
             { "-inf", double.NegativeInfinity.ToString() },
-            { "clipboard", "" },
-            { "randomchar", "" },
-            { "randomalphabet", "" },
-            { "uptime", "" },
+            { "null", null },
+            { "clipboard", "null" },
+            { "randomchar", "null" },
+            { "randomalphabet", "null" },
+            { "randomword", "null" },
+            { "newword", "null" },
+            { "uptime", "null" },
             { "input", "" },
             { "whitespace", "	" },
             { "zerowidth", "​" },
@@ -38,9 +41,9 @@ namespace Typography.Meta
             { "sus", "ඞ​" },
             { "right-to-left", "‮" },
 
-            { "disc_bold", "**"},
-            { "disc_italics", "_"},
-            { "disc_underline", "__"},
+            { "disc_bold", "**" },
+            { "disc_italics", "_" },
+            { "disc_underline", "__" },
             { "disc_strikethrough", "~~" },
             { "disc_spoiler", "~~" },
             { "disc_robotic", "` " },
@@ -133,20 +136,15 @@ namespace Typography.Meta
                 if (progressBar)
                     bar.Increase();
 
-                variables["randomchar"] = ((char)rnd.Next(char.MinValue, char.MaxValue)).ToString();
-                variables["randomalphabet"] = ((char)rnd.Next('a', 'z')).ToString();
-
                 bool isFinalCharacter = i + 1 == input.Length;
 
                 //escape sequences
                 if (input[i] == '\\' && !isFinalCharacter)
                 {
-                    string resultingChar = input[i].ToString() + input[i + 1].ToString();
-
                     if (isInPercent)
-                        currentPercent += resultingChar;
+                        currentPercent += input[i + 1];
                     else
-                        returnValue += resultingChar;
+                        returnValue += input[i + 1];
 
                     i++;
                     continue;
@@ -159,11 +157,17 @@ namespace Typography.Meta
                     if (variables.ContainsKey(currentPercent.ToLower()))
                     {
                         Program.Debug($"Found var {currentPercent.ToLower()} as {variables[currentPercent.ToLower()]}");
+
+                        RegenerateRandomChars(rnd);
+
                         returnValue += variables[currentPercent.ToLower()];
                     }
 
                     else if (!isInPercent)
+                    {
+                        Program.Error($"{currentPercent} Is not an error!");
                         returnValue += $"%{currentPercent}%";
+                    }
 
                     currentPercent = "";
                     continue;
@@ -179,6 +183,15 @@ namespace Typography.Meta
                 returnValue += "%" + currentPercent;
 
             return returnValue;
+        }
+
+        private static void RegenerateRandomChars(Random rnd)
+        {
+            variables["randomchar"] = ((char)rnd.Next(char.MinValue, char.MaxValue)).ToString();
+            variables["randomalphabet"] = ((char)rnd.Next('a', 'z')).ToString();
+
+            variables["randomword"] = AlphabetAndWords.Words[rnd.Next(0, AlphabetAndWords.Words.Count)];
+            variables["newword"] = RandomWordCreator.GenerateRandomWord();
         }
 
         public static string[] CheckForVars(string[] input)

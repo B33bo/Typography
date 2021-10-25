@@ -507,7 +507,7 @@ namespace Typography
 
                 currentChar--;
 
-                if (AlphabetAndWords.alphabet.Count <= currentChar)
+                if (AlphabetAndWords.alphabet.Length <= currentChar)
                 {
                     Program.Error($"{currentChar} is not in the alphabet (1-26)");
                     returnValue += currentChar;
