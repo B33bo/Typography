@@ -53,6 +53,9 @@ namespace Typography
 
         public static string Encode(string input, List<string> phoneticAlphabet, string ProgressBarName)
         {
+            if (input.Length == 0)
+                return "";
+
             string returnValue = "";
             ProgressBar bar = new(ProgressBarName, input.Length);
 

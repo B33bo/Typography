@@ -134,6 +134,7 @@ namespace Typography
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0057:Use range operator", Justification = "<Pending>")]
         public static string Translate(string word, string fromLanguage, string toLanguage, bool progressbar = true)
 		{
+			fromLanguage ??= ""; toLanguage ??= "";
 			ProgressBar bar = null;
 
 			if (progressbar)

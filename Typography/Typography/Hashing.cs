@@ -93,6 +93,7 @@ namespace Typography
 
         public static string Hash(string input, string algorithm)
         {
+            algorithm = algorithm ?? "sha256";
             new ProgressBar($"Hash ({input})", 1, 1).Print();
             switch (algorithm.ToLower())
             {

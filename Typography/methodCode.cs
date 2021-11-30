@@ -101,7 +101,7 @@ namespace Typography.Meta
                     Console.ReadLine();
                 }
 
-                returnValue = Typography.DoTypographyType(command.ParseAsType(), returnValue, Params);
+                returnValue = Typography.DoTypographyType(command.ParseAsType(), inputVar, Params);
             }
 
             Program.Debug($"End of method {methodName}");

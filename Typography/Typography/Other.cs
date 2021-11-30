@@ -69,8 +69,8 @@ namespace Typography
     {
         public static string Encode(string Input)
         {
-            if (Input.Length == 0)
-                return "";
+            //if (Input.Length == 0)
+                //return "";
 
             ProgressBar bar = new("Sentence Pyramid", (Input.Length * 3) - 2);
             List<string> ListFormatreturnVal = new();
@@ -111,6 +111,9 @@ namespace Typography
     {
         public static string Encode(string Input, string X, string Y)
         {
+            X = X ?? "";
+            Y = Y ?? "";
+
             new ProgressBar("Replace", 1, 1).Print();
 
             if (X.Length == 0)
@@ -385,6 +388,8 @@ namespace Typography
     {
         public static string Randomize(string Input)
         {
+            if (Input.Length == 0)
+                return "";
             ProgressBar bar = new("Randomize", Input.Length);
             string returnVal = "";
             Random rng = new();

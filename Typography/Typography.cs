@@ -33,8 +33,8 @@ namespace Typography
                         AnagramSolver.DeAnagram(input);
 
                 case TypographyType.error:
-                    bool fromUser = Params[0].ToLower() == "error";
-                    string hardCodedError = $"{Params[0]} is an invalid command";
+                    bool fromUser = Params.SafeGet(0, "").ToLower() == "error";
+                    string hardCodedError = $"{Params.SafeGet(0, "")} is an invalid command";
 
                     if (fromUser)
                         Program.Error(Params.Length >= 2 ? Params[1] : input);
@@ -78,13 +78,13 @@ namespace Typography
                     return ReplaceXwithY.Encode(input, Params.SafeGet(1), Params.SafeGet(2));
 
                 case TypographyType.longerWord:
-                    string Along = Params.SafeGet(1);
+                    string Along = Params.SafeGet(1, "");
                     string Blong = Params.SafeGet(2, input);
 
                     return Along.Length < Blong.Length ? Along : Blong;
 
                 case TypographyType.shorterWord:
-                    string Ashort = Params.SafeGet(1);
+                    string Ashort = Params.SafeGet(1, "");
                     string Bshort = Params.SafeGet(2, input);
 
                     return Ashort.Length > Bshort.Length ? Ashort : Bshort;
@@ -520,6 +520,9 @@ namespace Typography
                 case TypographyType.unicrush:
                     return toEncode ? Crush.Encode(input, Params.SafeGet(2, "true").IsTrue()) :
                         Crush.Decode(input);
+
+                case TypographyType.test:
+                    return Tst.Test().ToString();
             }
 
             Program.Error($"{type} is not yet implemented");
@@ -685,6 +688,8 @@ namespace Typography
                     return "Repeat until over       repeatuntilover~length";
                 case TypographyType.unicrush:
                     return "Crush chars             crush~encode/decode~allowIffy";
+                case TypographyType.test:
+                    return "Test                    tst";
                 default:
                     return input.ToString();
             }
@@ -771,6 +776,7 @@ namespace Typography
                 "callmethodfor" => TypographyType.callmethodfor,
                 "repeatuntilover" => TypographyType.repeatuntilover,
                 "unicrush" or "crush" => TypographyType.unicrush,
+                "tst" => TypographyType.test,
                 "" or " " => TypographyType.None,
                 _ => TypographyType.error,
             };
@@ -856,5 +862,6 @@ namespace Typography
         callmethodfor,
         repeatuntilover,
         unicrush,
+        test,
     }
 }

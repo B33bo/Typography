@@ -28,12 +28,20 @@ namespace Typography.Meta
             if (array.Length == 0)
             {
                 Program.Error("Not any params (0)");
+
+                if (typeof(T) == typeof(string))
+                    return (T)Convert.ChangeType("", typeof(T));
+
                 return default;
             }
 
             if (array.Length <= index)
             {
                 Program.Error($"{array[0]} does not have enough params ({array.Length})");
+
+                if (typeof(T) == typeof(string))
+                    return (T)Convert.ChangeType("", typeof(T));
+
                 return default;
             }
 
@@ -64,6 +72,9 @@ namespace Typography.Meta
 
         public static string ToRealString(this List<string> input, char seperator)
         {
+            if (input.Count == 0)
+                return "";
+
             string returnValue = "";
             foreach (var item in input)
             {
