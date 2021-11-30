@@ -69,6 +69,9 @@ namespace Typography
     {
         public static string Encode(string Input)
         {
+            if (Input.Length == 0)
+                return "";
+
             ProgressBar bar = new("Sentence Pyramid", (Input.Length * 3) - 2);
             List<string> ListFormatreturnVal = new();
             string returnVal = "";

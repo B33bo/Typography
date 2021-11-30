@@ -74,11 +74,12 @@ namespace Typography
             {"ma'h", "maths"},
             {"walmart", "ASDA" },
             {"target", "Tesco" },
+            {"chip", "crisp"},
         };
 
         public static string Encode(string Input)
         {
-            Input = Input.ToLower();
+            Input = Input.ToLower().Replace("chip", "crisp");
             List<string> splitByWords = Input.Split(' ').ToList();
             string returnValue = "";
 

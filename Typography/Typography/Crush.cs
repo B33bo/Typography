@@ -288,6 +288,7 @@ namespace Typography
             {"sr", "㏛"},
             {"Sv", "㏜"},
             {"Wb", "㏝"},
+            { "and", "&"},
         };
 
         public static Dictionary<string, string> iffy = new()
