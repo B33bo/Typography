@@ -84,7 +84,6 @@ namespace Typography.Meta
 
         public string Compute(string inputVar)
         {
-            string returnValue = inputVar;
             for (int i = 0; i < commands.Length; i++)
             {
                 string LookedForVars = CheckForVars(commands[i]);
@@ -96,16 +95,16 @@ namespace Typography.Meta
                 if (Program.DebugMode)
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine($"debug:: {Params.ToRealString('~')} ({returnValue})");
+                    Console.WriteLine($"debug:: {Params.ToRealString('~')} ({inputVar})");
                     Console.ResetColor();
                     Console.ReadLine();
                 }
 
-                returnValue = Typography.DoTypographyType(command.ParseAsType(), inputVar, Params);
+                inputVar = Typog.DoTypographyType(command.ParseAsType(), inputVar, Params);
             }
 
             Program.Debug($"End of method {methodName}");
-            return returnValue;
+            return inputVar;
         }
 
         public static void ReassignChangingVariables()

@@ -5,7 +5,7 @@ using Typography.Meta;
 
 namespace Typography
 {
-    public static class Typography
+    public static class Typog
     {
         public static string DoTypographyType(TypographyType type, string input, string[] Params)
         {
@@ -389,7 +389,7 @@ namespace Typography
                     return toEncode ? NumericAlphabet.Encode(input) : NumericAlphabet.Decode(input);
 
                 case TypographyType.braille:
-                    return toEncode ? TextToEncode.Encode(input, TextToEncode.braille, "Braille (Encode)") :
+                    return toEncode ? Braille.Encode(input) :
                         Braille.Decode(input);
 
                 case TypographyType.math:

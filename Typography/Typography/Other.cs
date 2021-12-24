@@ -529,39 +529,6 @@ namespace Typography
         }
     }
 
-    public static class Braille
-    {
-        public static string Decode(string Input)
-        {
-            ProgressBar bar = new("Braille (Decode)", Input.Length);
-            Dictionary<string, string> targetdict = TextToEncode.braille.FlipDict();
-            string returnValue = "";
-
-            for (int i = 0; i < Input.Length; i++)
-            {
-                bar.Increase();
-
-                if (i + 1 < Input.Length)
-                {
-                    string currentPlus1 = $"{Input[i]}{Input[i + 1]}";
-                    if (targetdict.ContainsKey(currentPlus1))
-                    {
-                        returnValue += currentPlus1;
-                        i++;
-                        continue;
-                    }
-                }
-
-                if (targetdict.ContainsKey(Input[i].ToString()))
-                    returnValue += targetdict[Input[i].ToString()];
-                else
-                    returnValue += Program.Error($"{Input[i]} is not a braille character!", Input[i].ToString());
-            }
-
-            return returnValue;
-        }
-    }
-
     public static class ToDiscordTimestamp
     {
         public static string Encode(string input, string formatType)

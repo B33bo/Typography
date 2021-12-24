@@ -18,7 +18,7 @@ namespace Typography
                     continue;
 
                 Console.WriteLine($"Testing {item.ToReadableString()}");
-                Typography.DoTypographyType(item, str, Array.Empty<string>());
+                Typog.DoTypographyType(item, str, Array.Empty<string>());
             }
 
             return true;
