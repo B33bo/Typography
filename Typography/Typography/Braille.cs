@@ -130,19 +130,36 @@ namespace Typography
             bool isCaps = false;
             for (int i = 0; i < input.Length; i++)
             {
+                bar.Increase();
                 if (input[i] == '⠼')
+                {
                     isDigits = true;
+                    continue;
+                }
                 else if (input[i] == '⢠')
+                {
                     isDigits = false;
+                    continue;
+                }
                 else if (input[i] == '⠠')
+                {
                     isCaps = true;
+                    continue;
+                }
 
                 if (isDigits)
                     newStr += charFromNumber[input[i].ToString()];
-                else if (isCaps)
-                    newStr += fromBraille[input[i].ToString()].ToUpper();
                 else
-                    newStr += fromBraille[input[i].ToString()];
+                {
+                    if (!fromBraille.ContainsKey(input[i].ToString()))
+                        continue;
+
+                    if (isCaps)
+                        newStr += fromBraille[input[i].ToString()].ToUpper();
+                    else
+                        newStr += fromBraille[input[i].ToString()];
+                }
+                isCaps = false;
             }
             return newStr;
         }
